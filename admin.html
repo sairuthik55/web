@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Admin — Orders | Coconut Waste Recycling Co.</title>
+<style>
+  :root{--accent:#2ebd8f;--bg:#f7fafb;--card:#fff;--muted:#64748b;--danger:#ef4444;--blue:#2563eb}
+  *{box-sizing:border-box}body{font-family:Inter,ui-sans-serif,system-ui,Arial,sans-serif;margin:0;background:var(--bg);color:#0f172a}
+  header{background:linear-gradient(90deg,#ecffef,#f0f9ff);padding:18px 20px;box-shadow:0 4px 18px rgba(2,6,23,0.06);display:flex;justify-content:space-between;align-items:center;gap:12px}
+  header h1{font-size:18px;margin:0;color:var(--accent)}
+  header .meta{color:var(--muted);font-size:13px}
+  .wrap{max-width:1100px;margin:20px auto;padding:0 16px}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+  .controls input[type="search"]{padding:10px 12px;border-radius:10px;border:1px solid #e6e9ee;min-width:220px}
+  .controls select, .controls button{padding:10px 12px;border-radius:10px;border:none;background:var(--accent);color:#fff;cursor:pointer}
+  .controls button.secondary{background:#94a3b8}
+  .grid{display:grid;grid-template-columns:1fr 360px;gap:16px}
+  .panel{background:var(--card);border-radius:12px;padding:14px;box-shadow:0 8px 30px rgba(2,6,23,0.06)}
+  .list{max-height:64vh;overflow:auto}
+  .order-row{display:flex;justify-content:space-between;align-items:flex-start;padding:10px;border-bottom:1px solid #f1f5f9}
+  .order-left{display:flex;gap:12px;align-items:flex-start}
+  .thumb{width:64px;height:64px;border-radius:8px;object-fit:cover;background:#f3f4f6;border:1px solid #eef2f7}
+  .order-meta{font-size:13px}
+  .order-meta h4{margin:0 0 6px 0;font-size:15px}
+  .order-actions{display:flex;gap:8px;align-items:center}
+  .btn{padding:8px 10px;border-radius:8px;border:none;cursor:pointer;font-weight:700}
+  .btn.green{background:#10b981;color:#fff}
+  .btn.orange{background:#f97316;color:#fff}
+  .btn.gray{background:#94a3b8;color:#fff}
+  .btn.danger{background:var(--danger);color:#fff}
+  .details{font-size:13px;color:var(--muted);margin-top:6px}
+  .empty{padding:18px;text-align:center;color:var(--muted)}
+  .side{display:flex;flex-direction:column;gap:10px}
+  .side .card{padding:12px;border-radius:10px;background:#fff;border:1px solid #eef2f7}
+  .preview-img{max-width:100%;border-radius:8px}
+  footer{max-width:1100px;margin:14px auto;padding:0 16px;color:var(--muted);font-size:13px;text-align:center}
+  .small{font-size:12px;color:var(--muted)}
+  @media(max-width:960px){.grid{grid-template-columns:1fr}.order-left{flex-direction:row} .thumb{width:54px;height:54px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Admin Dashboard — Orders</h1>
+    <div class="meta">View & manage pending / confirmed orders</div>
+  </div>
+  <div class="meta" id="adminClock">—</div>
+</header>
+
+<div class="wrap">
+  <div class="controls">
+    <input id="searchInput" type="search" placeholder="Search by order id / name / phone / city" />
+    <select id="filterSelect">
+      <option value="all">All orders</option>
+      <option value="pending">Pending</option>
+      <option value="confirmed">Confirmed</option>
+    </select>
+    <button id="refreshBtn" class="secondary">Refresh</button>
+    <button id="exportCsvBtn">Export CSV</button>
+    <button id="clearRejectedBtn" class="secondary">Clear Rejected</button>
+    <div style="margin-left:auto" class="small">Local-only admin (client-side). Use server auth for production.</div>
+  </div>
+
+  <div class="grid">
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <strong>Orders</strong>
+        <div class="small" id="counts">Loading…</div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <button class="btn green" onclick="bulkConfirmSelected()">Confirm selected</button>
+        <button class="btn orange" onclick="bulkRejectSelected()">Reject selected</button>
+        <button class="btn gray" onclick="selectAll()">Select all</button>
+        <button class="btn gray" onclick="clearSelection()">Clear</button>
+      </div>
+
+      <div class="list" id="orderList"></div>
+    </div>
+
+    <div class="side">
+      <div class="card panel" id="detailCard">
+        <strong>Order details</strong>
+        <div id="detailContent" style="margin-top:10px">
+          <div class="empty">Select an order to see details</div>
+        </div>
+      </div>
+
+      <div class="card panel">
+        <strong>Quick actions</strong>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+          <button class="btn green" onclick="openAllScreenshots()">Open all screenshots</button>
+          <button class="btn gray" onclick="exportCSVAll()">Export ALL orders CSV</button>
+          <button class="btn danger" onclick="clearAllLocal()">Clear all local orders</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  © <span id="year"></span> Coconut Waste Recycling Co. — Admin console (client-side only)
+</footer>
+
+<script>
+/*
+  admin.html
+  - Reads localStorage keys: 'pending_orders', 'confirmed_orders'
+  - UI: list orders, view details, confirm/reject/revert, download screenshots, export CSV
+  - Simple password gate on load (default: admin123). Client-side only.
+*/
+
+const ADMIN_PASSWORD = 'admin123'; // change as desired (client-side only)
+const PENDING_KEY = 'pending_orders';
+const CONFIRMED_KEY = 'confirmed_orders';
+const REJECTED_KEY = 'rejected_orders'; // optional store for rejects
+
+// require password
+(function gate(){
+  let tries = 0;
+  while(true){
+    const p = prompt("Enter admin password to access the admin page:");
+    if(p === null){ document.body.innerHTML = "<p style='padding:20px'>Access cancelled.</p>"; throw new Error('Admin access cancelled'); }
+    if(p === ADMIN_PASSWORD) break;
+    tries++;
+    alert("Incorrect password.");
+    if(tries >= 4){ alert("Too many attempts. Reload to try again."); document.body.innerHTML = "<p style='padding:20px'>Access denied.</p>"; throw new Error('Too many attempts'); }
+  }
+})();
+
+// helpers for storage
+function getPending(){ try{ return JSON.parse(localStorage.getItem(PENDING_KEY) || '[]'); }catch(e){ console.error(e); return []; } }
+function setPending(v){ localStorage.setItem(PENDING_KEY, JSON.stringify(v || [])); }
+function getConfirmed(){ try{ return JSON.parse(localStorage.getItem(CONFIRMED_KEY) || '[]'); }catch(e){ console.error(e); return []; } }
+function setConfirmed(v){ localStorage.setItem(CONFIRMED_KEY, JSON.stringify(v || [])); }
+function getRejected(){ try{ return JSON.parse(localStorage.getItem(REJECTED_KEY) || '[]'); }catch(e){ console.error(e); return []; } }
+function setRejected(v){ localStorage.setItem(REJECTED_KEY, JSON.stringify(v || [])); }
+
+// UI state
+let selectedOrderIds = new Set();
+let lastSelectedId = null;
+
+// format helpers
+function fmtDate(iso){ try{ return new Date(iso).toLocaleString(); }catch(e){ return iso||'-'; } }
+function money(n){ return '₹' + (Number(n||0)).toFixed(2); }
+
+// render order list
+function renderList(){
+  const filter = document.getElementById('filterSelect').value;
+  const q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+  let orders = [];
+  if(filter === 'confirmed') orders = getConfirmed().slice().reverse();
+  else if(filter === 'pending') orders = getPending().slice().reverse();
+  else orders = getPending().slice().reverse().concat(getConfirmed().slice().reverse());
+  const list = document.getElementById('orderList');
+  list.innerHTML = '';
+  if(!orders.length){ list.innerHTML = '<div class="empty">No orders found.</div>'; updateCounts(); return; }
+
+  orders.forEach(o=>{
+    const id = o.id || ('ORD'+(Math.random()*1e12|0));
+    // search filter
+    const hay = `${id} ${o.delivery?.name||''} ${o.delivery?.phone||''} ${o.delivery?.city||''}`.toLowerCase();
+    if(q && !hay.includes(q)) return;
+
+    const row = document.createElement('div');
+    row.className = 'order-row';
+    row.dataset.orderId = id;
+
+    const left = document.createElement('div'); left.className = 'order-left';
+    const img = document.createElement('img'); img.className = 'thumb';
+    img.alt = 'screenshot';
+    if(o.paymentScreenshot) img.src = o.paymentScreenshot;
+    else img.src = 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="120" height="80"><rect width="100%" height="100%" fill="#f3f4f6"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#94a3b8" font-size="12">no image</text></svg>`);
+    img.addEventListener('click', ()=> viewScreenshot(id));
+    left.appendChild(img);
+
+    const meta = document.createElement('div'); meta.className = 'order-meta';
+    const title = document.createElement('h4'); title.textContent = `${id} ${o.paymentMethod ? '• '+o.paymentMethod : ''}`;
+    meta.appendChild(title);
+    const small = document.createElement('div'); small.className = 'small';
+    small.innerHTML = `<div style="font-weight:700">${o.delivery?.name || '-'}</div>
+      <div class="details">${o.delivery?.phone || '-'} • ${o.delivery?.city || '-'} • ${fmtDate(o.createdAt)}</div>`;
+    meta.appendChild(small);
+    left.appendChild(meta);
+
+    const right = document.createElement('div'); right.className = 'order-actions';
+    const chk = document.createElement('input'); chk.type = 'checkbox'; chk.style.marginRight='6px';
+    chk.checked = selectedOrderIds.has(id);
+    chk.addEventListener('change', (ev)=> {
+      if(ev.target.checked) selectedOrderIds.add(id); else selectedOrderIds.delete(id);
+      lastSelectedId = id;
+      renderCounts(); // update selection count
+    });
+    right.appendChild(chk);
+
+    const viewBtn = document.createElement('button'); viewBtn.className = 'btn gray'; viewBtn.textContent = 'View';
+    viewBtn.onclick = ()=> showDetails(o);
+    right.appendChild(viewBtn);
+
+    // Confirm / Reject buttons based on status
+    const isConfirmed = (getConfirmed()||[]).some(x=>x.id === id);
+    if(!isConfirmed){
+      const confirmBtn = document.createElement('button'); confirmBtn.className = 'btn green'; confirmBtn.textContent = 'Confirm';
+      confirmBtn.onclick = ()=> confirmOrder(id);
+      right.appendChild(confirmBtn);
+    } else {
+      const revertBtn = document.createElement('button'); revertBtn.className = 'btn orange'; revertBtn.textContent = 'Revert';
+      revertBtn.onclick = ()=> revertOrder(id);
+      right.appendChild(revertBtn);
+    }
+    const rejBtn = document.createElement('button'); rejBtn.className = 'btn danger'; rejBtn.textContent = 'Reject';
+    rejBtn.onclick = ()=> rejectOrder(id);
+    right.appendChild(rejBtn);
+
+    row.appendChild(left);
+    row.appendChild(right);
+    list.appendChild(row);
+  });
+
+  updateCounts();
+}
+
+// show details in side panel
+function showDetails(order){
+  const content = document.getElementById('detailContent');
+  const id = order.id || '—';
+  const itemsHtml = (order.items||[]).map(it=>`<div style="display:flex;justify-content:space-between;margin:4px 0"><div>${escapeHtml(it.name)} × ${it.qty}</div><div>${money(it.price*it.qty)}</div></div>`).join('');
+  content.innerHTML = `
+    <div style="font-weight:700;margin-bottom:6px">${id}</div>
+    <div style="font-size:14px">${escapeHtml(order.delivery?.name||'-')} • ${escapeHtml(order.delivery?.phone||'-')}</div>
+    <div class="small" style="margin-top:6px">${escapeHtml(order.delivery?.address||'-')} ${escapeHtml(order.delivery?.city||'')} ${escapeHtml(order.delivery?.state||'')} • ${order.delivery?.pincode||''}</div>
+    <div style="margin-top:10px"><strong>Items</strong>${itemsHtml || '<div class="small">No items</div>'}</div>
+    <div style="margin-top:10px"><strong>Totals</strong>
+      <div class="small">Subtotal: ${money(order.totals?.subtotal)}</div>
+      <div class="small">GST: ${money(order.totals?.tax)}</div>
+      <div class="small">Grand: ${money(order.totals?.grand)}</div>
+    </div>
+    <div style="margin-top:10px"><strong>Notes</strong><div class="small">${escapeHtml(order.delivery?.notes||'—')}</div></div>
+    <div style="margin-top:10px">${order.paymentScreenshot ? `<img src="${order.paymentScreenshot}" class="preview-img" alt="screenshot" />` : '<div class="small">No screenshot attached</div>'}</div>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn green" onclick="confirmOrder('${id}')">Confirm</button>
+      <button class="btn danger" onclick="rejectOrder('${id}')">Reject</button>
+      <button class="btn gray" onclick="downloadScreenshotById('${id}')">Download screenshot</button>
+    </div>
+  `;
+  lastSelectedId = id;
+}
+
+// basic HTML escaping
+function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]); }
+
+// Order actions
+function confirmOrder(orderId){
+  const pend = getPending();
+  const idx = pend.findIndex(x=>x.id === orderId);
+  if(idx === -1){
+    // maybe it is in confirmed already
+    alert('Order not found in pending_orders.');
+    return;
+  }
+  const [order] = pend.splice(idx,1);
+  order.status = 'confirmed_cod';
+  const confirmed = getConfirmed();
+  confirmed.push(order);
+  setPending(pend);
+  setConfirmed(confirmed);
+  renderList();
+  alert('Order confirmed: ' + orderId);
+}
+
+function revertOrder(orderId){
+  const confirmed = getConfirmed();
+  const idx = confirmed.findIndex(x=>x.id === orderId);
+  if(idx === -1){ alert('Order not found in confirmed_orders.'); return; }
+  const [order] = confirmed.splice(idx,1);
+  order.status = 'pending';
+  const pend = getPending();
+  pend.push(order);
+  setPending(pend);
+  setConfirmed(confirmed);
+  renderList();
+  alert('Order reverted to pending: ' + orderId);
+}
+
+function rejectOrder(orderId){
+  // move from pending or confirmed into rejected list
+  let moved = null;
+  let pend = getPending();
+  let confirmed = getConfirmed();
+  let idx = pend.findIndex(x=>x.id === orderId);
+  if(idx !== -1){ moved = pend.splice(idx,1)[0]; setPending(pend); }
+  else { idx = confirmed.findIndex(x=>x.id === orderId); if(idx !== -1){ moved = confirmed.splice(idx,1)[0]; setConfirmed(confirmed); } }
+  if(!moved){ alert('Order not found.'); return; }
+  moved.status = 'rejected';
+  const rej = getRejected(); rej.push(moved); setRejected(rej);
+  renderList();
+  alert('Order rejected: ' + orderId);
+}
+
+// bulk selection helpers
+function bulkConfirmSelected(){
+  if(selectedOrderIds.size === 0){ alert('No orders selected'); return; }
+  const pend = getPending();
+  const confirmed = getConfirmed();
+  const toMove = pend.filter(o=> selectedOrderIds.has(o.id));
+  if(toMove.length === 0){ alert('Selected orders are not in pending list'); return; }
+  // move them
+  const remainingPend = pend.filter(o=> !selectedOrderIds.has(o.id));
+  toMove.forEach(t=> t.status = 'confirmed_cod');
+  confirmed.push(...toMove);
+  setPending(remainingPend);
+  setConfirmed(confirmed);
+  selectedOrderIds.clear();
+  renderList();
+  alert(`Confirmed ${toMove.length} order(s).`);
+}
+function bulkRejectSelected(){
+  if(selectedOrderIds.size === 0){ alert('No orders selected'); return; }
+  const pend = getPending();
+  const confirmed = getConfirmed();
+  const toReject = [];
+  const remainingPend = [];
+  pend.forEach(o=> selectedOrderIds.has(o.id) ? toReject.push(o) : remainingPend.push(o));
+  // also check confirmed list
+  const remainingConf = [];
+  confirmed.forEach(o=> selectedOrderIds.has(o.id) ? toReject.push(o) : remainingConf.push(o));
+  setPending(remainingPend);
+  setConfirmed(remainingConf);
+  const rej = getRejected();
+  toReject.forEach(t=> t.status = 'rejected');
+  rej.push(...toReject);
+  setRejected(rej);
+  selectedOrderIds.clear();
+  renderList();
+  alert(`Rejected ${toReject.length} order(s).`);
+}
+function selectAll(){ const nodes = document.querySelectorAll('#orderList .order-row'); nodes.forEach(n=> selectedOrderIds.add(n.dataset.orderId)); renderList(); renderCounts(); }
+function clearSelection(){ selectedOrderIds.clear(); renderList(); renderCounts(); }
+
+// view / download screenshots
+function viewScreenshot(orderId){
+  // search pending and confirmed
+  const all = getPending().concat(getConfirmed()).concat(getRejected());
+  const o = all.find(x=>x.id === orderId);
+  if(!o){ alert('Order not found'); return; }
+  if(!o.paymentScreenshot){ alert('No screenshot stored for this order'); return; }
+  const w = window.open(); w.document.body.style.margin='0'; const img = w.document.createElement('img'); img.src = o.paymentScreenshot; img.style.maxWidth='100%'; w.document.body.appendChild(img);
+}
+function downloadScreenshotById(orderId){
+  const all = getPending().concat(getConfirmed()).concat(getRejected());
+  const o = all.find(x=>x.id === orderId);
+  if(!o || !o.paymentScreenshot){ alert('No screenshot available'); return; }
+  const a = document.createElement('a'); a.href = o.paymentScreenshot; a.download = `${orderId}_screenshot.png`; document.body.appendChild(a); a.click(); a.remove();
+}
+function openAllScreenshots(){
+  const all = getPending().concat(getConfirmed());
+  let opened = 0;
+  all.forEach(o=>{ if(o.paymentScreenshot){ window.open(o.paymentScreenshot); opened++; }});
+  alert(`Opened ${opened} screenshot(s) in new tabs (if any).`);
+}
+
+// export CSV helpers
+function toCSVRow(arr){ return arr.map(v=> `"${String(v||'').replace(/"/g,'""')}"`).join(','); }
+function exportCSV(list, filename='orders_export.csv'){
+  if(!list || !list.length){ alert('No orders to export'); return; }
+  const header = ['orderId','createdAt','paymentMethod','name','phone','address','city','state','pincode','subtotal','tax','grand','items','status'];
+  const rows = [toCSVRow(header)];
+  list.forEach(o=>{
+    const items = (o.items||[]).map(i=> `${i.name} x${i.qty}`).join('; ');
+    const r = [
+      o.id,
+      o.createdAt,
+      o.paymentMethod,
+      o.delivery?.name,
+      o.delivery?.phone,
+      o.delivery?.address,
+      o.delivery?.city,
+      o.delivery?.state,
+      o.delivery?.pincode,
+      o.totals?.subtotal,
+      o.totals?.tax,
+      o.totals?.grand,
+      items,
+      o.status || ''
+    ];
+    rows.push(toCSVRow(r));
+  });
+  const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+}
+function exportCSVAll(){ const all = getPending().concat(getConfirmed()).concat(getRejected()); exportCSV(all, 'all_orders.csv'); }
+function exportCSVSelected(){ const ids = Array.from(selectedOrderIds); if(!ids.length){ alert('No orders selected'); return; } const all = getPending().concat(getConfirmed()).concat(getRejected()).filter(o=> ids.includes(o.id)); exportCSV(all, 'selected_orders.csv'); }
+function exportCSVPending(){ exportCSV(getPending(), 'pending_orders.csv'); }
+
+// misc helpers
+function renderCounts(){
+  const pending = getPending().length; const confirmed = getConfirmed().length; const rejected = getRejected().length;
+  document.getElementById('counts').textContent = `Pending: ${pending} · Confirmed: ${confirmed} · Rejected: ${rejected} · Selected: ${selectedOrderIds.size}`;
+  document.getElementById('adminClock').textContent = new Date().toLocaleString();
+}
+function updateCounts(){ renderCounts(); }
+
+// actions wired to UI
+document.getElementById('filterSelect').addEventListener('change', ()=> { renderList(); });
+document.getElementById('searchInput').addEventListener('input', ()=> { renderList(); });
+document.getElementById('refreshBtn').addEventListener('click', ()=> { renderList(); alert('Refreshed'); });
+document.getElementById('exportCsvBtn').addEventListener('click', ()=> { exportCSVSelected(); });
+document.getElementById('clearRejectedBtn').addEventListener('click', ()=> { if(confirm('Clear rejected orders from localStorage?')){ setRejected([]); renderList(); }});
+document.getElementById('year').textContent = new Date().getFullYear();
+
+// storage event to react to changes from storefront page
+window.addEventListener('storage', (e)=>{
+  if(e.key === PENDING_KEY || e.key === CONFIRMED_KEY || e.key === REJECTED_KEY){
+    renderList();
+  }
+});
+
+// initialization
+function init(){
+  // ensure keys exist
+  if(!localStorage.getItem(PENDING_KEY)) localStorage.setItem(PENDING_KEY, JSON.stringify([]));
+  if(!localStorage.getItem(CONFIRMED_KEY)) localStorage.setItem(CONFIRMED_KEY, JSON.stringify([]));
+  if(!localStorage.getItem(REJECTED_KEY)) localStorage.setItem(REJECTED_KEY, JSON.stringify([]));
+  renderList();
+  setInterval(()=> renderCounts(), 1000);
+}
+init();
+
+/* Utility: clear everything (use carefully) */
+function clearAllLocal(){
+  if(!confirm('Clear all orders (pending, confirmed, rejected) from localStorage?')) return;
+  localStorage.removeItem(PENDING_KEY);
+  localStorage.removeItem(CONFIRMED_KEY);
+  localStorage.removeItem(REJECTED_KEY);
+  renderList();
+  alert('All local orders cleared.');
+}
+
+/* convenience: download screenshot by scanning both lists */
+function downloadScreenshotById(orderId){
+  const all = getPending().concat(getConfirmed()).concat(getRejected());
+  const o = all.find(x=>x.id === orderId);
+  if(!o || !o.paymentScreenshot){ alert('No screenshot available'); return; }
+  const a = document.createElement('a'); a.href = o.paymentScreenshot; a.download = `${orderId}_screenshot.png`; document.body.appendChild(a); a.click(); a.remove();
+}
+</script>
+</body>
+</html>
