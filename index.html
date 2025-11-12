@@ -130,14 +130,24 @@ header{background:#fff;box-shadow:0 3px 15px rgba(0,0,0,0.05);position:sticky;to
     </div>
 
     <div id="upiPanel" style="margin-top:12px;background:#f8fafc;padding:12px;border-radius:8px;border:1px solid #e6f3ea">
-      <p style="margin:0 0 6px"><strong>Pay via UPI to:</strong></p>
-      <p style="margin:0 8px 8px"><strong>Mobile / UPI number:</strong> <span id="upiNumber">+91-8639533425</span></p>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <button class="add-btn" onclick="copyToClipboard('+918639533425')">Copy number</button>
-        <button class="add-btn" onclick="openUpiDeepLink()">Open UPI app</button>
-        <span style="color:var(--muted);font-size:0.9rem">After paying, click "I have paid — Confirm Payment".</span>
-      </div>
+  <p style="margin:0 0 6px"><strong>Pay via UPI to:</strong></p>
+  <p style="margin:0 8px 8px"><strong>Mobile / UPI number:</strong> <span id="upiNumber">+91-8639533425</span></p>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <button class="add-btn" onclick="copyToClipboard('+918639533425')">Copy number</button>
+    <button class="add-btn" onclick="openUpiDeepLink()">Open UPI app</button>
+    <span style="color:var(--muted);font-size:0.9rem">After paying, upload your payment screenshot below and then click "I have paid — Confirm Payment".</span>
+  </div>
+
+  <!-- payment screenshot upload UI -->
+  <div style="margin-top:12px;border-radius:8px;padding:10px;background:#fff;border:1px solid #e6f3ea">
+    <label style="display:block;margin-bottom:6px;color:var(--muted);font-weight:600">Upload payment screenshot (required)</label>
+    <input id="paymentScreenshotInput" type="file" accept="image/*" style="display:block;margin-bottom:10px" />
+    <div id="paymentScreenshotPreview" style="min-height:48px;display:flex;align-items:center;justify-content:center">
+      <span style="color:#64748b;font-size:0.95rem">No screenshot uploaded</span>
     </div>
+  </div>
+</div>
+
 
     <div id="codPanel" style="display:none;margin-top:12px;background:#fff6ee;padding:12px;border-radius:8px;border:1px solid #fbe6d0">
       <p style="margin:0"><strong>Cash on Delivery selected.</strong> Please keep cash ready when the delivery arrives.</p>
@@ -349,7 +359,7 @@ header{background:#fff;box-shadow:0 3px 15px rgba(0,0,0,0.05);position:sticky;to
            onerror="this.src='https://i.postimg.cc/6p3PgX35/Whats-App-Image-2025-11-11-at-3-20-04-PM.jpg'">
 
       <div class="founder-text">
-        <h3>Meet the Founder — VENNALA</h3>
+        <h3>Meet the Founder — PANDU</h3>
         <p>Vennala is an environmental entrepreneur who founded this venture to redefine waste management in India. His vision is to transform agricultural by-products into sustainable resources that protect the planet while strengthening communities.</p>
         <p class="founder-quote">“Our goal is to make every coconut count — for farmers, for soil health, and for our future.”</p>
       </div>
@@ -361,8 +371,8 @@ header{background:#fff;box-shadow:0 3px 15px rgba(0,0,0,0.05);position:sticky;to
 
       <div class="team-grid">
         <div class="team-member">
-          <img src="images/founder.jpg" alt="Ruthik" onerror="this.src='https://i.postimg.cc/6p3PgX35/Whats-App-Image-2025-11-11-at-3-20-04-PM.jpg'">
-          <h4>Ruthik</h4>
+          <img src="images/founder.jpg" alt="PANDU" onerror="this.src='https://i.postimg.cc/6p3PgX35/Whats-App-Image-2025-11-11-at-3-20-04-PM.jpg'">
+          <h4>PANDU</h4>
           <p>Founder & CEO</p>
         </div>
 
@@ -379,8 +389,8 @@ header{background:#fff;box-shadow:0 3px 15px rgba(0,0,0,0.05);position:sticky;to
         </div>
 
         <div class="team-member">
-          <img src="images/member4.jpg" alt="vennala" onerror="this.src='https://i.postimg.cc/WbmYh4Dz/Whats-App-Image-2025-10-25-at-9-31-07-PM.jpg'">
-          <h4>vennala</h4>
+          <img src="images/member4.jpg" alt="RUTHIK" onerror="this.src='https://i.postimg.cc/WbmYh4Dz/Whats-App-Image-2025-10-25-at-9-31-07-PM.jpg'">
+          <h4>Ruthik</h4>
           <p>Marketing & Outreach</p>
         </div>
       </div>
@@ -423,13 +433,14 @@ header{background:#fff;box-shadow:0 3px 15px rgba(0,0,0,0.05);position:sticky;to
 
 <script>
 /* -------------------------
-   Data & constants
+   Data & constants (unchanged)
    ------------------------- */
 const products = [
-  { id:1, name:"Cocopeat Block", price:299, img:"https://i.postimg.cc/y6pX71qk/OIP.jpg", short:"Compressed cocopeat block — great water retention and aeration.", description:"Compressed cocopeat blocks made from coconut coir.", usage:["Soak in water to expand","Mix with soil","Use for seed starting"] },
+  { id:1, name:"Cocopeat Block(1KG)", price:120, img:"https://i.postimg.cc/y6pX71qk/OIP.jpg", short:"Compressed cocopeat block — great water retention and aeration.", description:"Compressed cocopeat blocks made from coconut coir.", usage:["Soak in water to expand","Mix with soil","Use for seed starting"] },
   { id:2, name:"Coir Fiber Bundle", price:199, img:"https://i.postimg.cc/xjpy9frX/OIP-1.jpg", short:"Long strong coir fibers", description:"Natural coir fibers for horticulture and crafts.", usage:["Use as planter liners","Make ropes and mats"] },
   { id:3, name:"Activated Carbon (Coconut Shell)", price:499, img:"https://i.postimg.cc/KcprmGX4/OIP-2.jpg", short:"Activated carbon for filtration", description:"High-grade activated carbon.", usage:["Use in water filters","Use in aquariums"] },
-  { id:4, name:"Organic Compost", price:249, img:"https://i.postimg.cc/L4QBm9d5/OIP-3.jpg", short:"Nutrient-rich compost", description:"Compost made from coconut waste.", usage:["Mix into garden beds","Top-dress potted plants"] }
+  { id:4, name:"cocopeat(1KG)", price:17, img:"https://i.postimg.cc/zDypT95y/il-1080x-N-1725209156-c1x6-e2e74919-5644-417e-8b4b-3f87a6314733.webp", short:"Nutrient-rich compost", description:"Compost made from coconut waste.", usage:["Mix into garden beds","Top-dress potted plants"] },
+  { id:5, name:"Ready to use pot", price:120, img:"https://i.postimg.cc/L4W6hZ6F/Whats-App-Image-2025-11-12-at-10-43-29-AM.jpg", short:"ready to use", description:"made with cocopeat,coil,compost ratio of 1:1:1.", usage:["add seed or plant ,pour water as required"] }
 ];
 
 const CART_KEY = "cwr_cart_v1";
@@ -438,7 +449,7 @@ const MERCHANT_DISPLAY_NUMBER = "+91-8639533425";
 const WHATSAPP_NUMBER_INT = "918639533425"; // merchant whatsapp (international format w/o +)
 
 /* -------------------------
-   Storage helpers & cart
+   Storage helpers & cart (unchanged)
    ------------------------- */
 function loadCart(){ try{return JSON.parse(localStorage.getItem(CART_KEY))||{items:{}}}catch{return {items:{}}} }
 function saveCart(cart){ localStorage.setItem(CART_KEY, JSON.stringify(cart)); }
@@ -449,7 +460,7 @@ function clearCart(){ saveCart({items:{}}); renderCartUI(); showToast("Cart clea
 function calculateTotalsObj(cart){ cart = cart||loadCart(); let subtotal=0; for(const k of Object.keys(cart.items||{})){ const it=cart.items[k]; subtotal += Number(it.price)*Number(it.qty); } subtotal=Math.round((subtotal+Number.EPSILON)*100)/100; const tax=Math.round((subtotal*TAX_RATE+Number.EPSILON)*100)/100; const grand=Math.round((subtotal+tax+Number.EPSILON)*100)/100; return {subtotal,tax,grand}; }
 
 /* -------------------------
-   Render products & modals
+   Render products & modals (unchanged)
    ------------------------- */
 const productGrid = document.getElementById("productGrid");
 function renderProducts(){ productGrid.innerHTML=""; products.forEach(p=>{ const card=document.createElement("div"); card.className="product-card"; card.innerHTML = `<img src="${p.img}" alt="${escapeHtml(p.name)}" onerror="this.src='https://i.postimg.cc/6p3PgX35/Whats-App-Image-2025-11-11-at-3-20-04-PM.jpg'"><h3>${escapeHtml(p.name)}</h3><p style="color:var(--muted);min-height:44px">${escapeHtml(p.short)}</p><p class="price">₹${Number(p.price).toFixed(2)}</p><div style="display:flex;gap:8px;justify-content:center;margin-top:10px"><button class="add-btn" onclick="addToCart(${p.id},1)">Add to Cart</button><button class="add-btn" style="background:#2b9f73" onclick="showProductModal(${p.id})">Details</button></div>`; productGrid.appendChild(card); }); }
@@ -459,7 +470,7 @@ function showProductModal(id){ const p = products.find(x=>x.id===Number(id)); if
 function closeProductModal(){ productModal.style.display="none"; productModal.setAttribute("aria-hidden","true"); }
 
 /* -------------------------
-   Cart UI
+   Cart UI (unchanged)
    ------------------------- */
 function renderCartUI(){ const cart = loadCart(); const body = document.getElementById("cartBody"); const container = document.getElementById("cartContainer"); body.innerHTML=""; const keys = Object.keys(cart.items||{}); if(keys.length===0){ body.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#6b7280;padding:20px">Your cart is empty.</td></tr>`; container.style.display="none"; updateCartTotals(); return; } container.style.display="block"; for(const k of keys){ const it=cart.items[k]; const total=Number(it.price)*Number(it.qty); const tr=document.createElement("tr"); tr.innerHTML = `<td style="display:flex;align-items:center"><img src="${it.img}" class="cart-item-img" onerror="this.src='https://i.postimg.cc/6p3PgX35/Whats-App-Image-2025-11-11-at-3-20-04-PM.jpg'"><div><div style="font-weight:600">${escapeHtml(it.name)}</div></div></td><td>₹${Number(it.price).toFixed(2)}</td><td><button class="qty-btn" onclick="decrementQty(${it.id})">-</button><input value="${it.qty}" oninput="qtyInput(event, ${it.id})" style="width:48px;text-align:center;border-radius:6px;border:1px solid #e5e7eb;padding:4px" /><button class="qty-btn" onclick="incrementQty(${it.id})">+</button></td><td>₹${Number(total).toFixed(2)}</td><td style="text-align:right"><button class="remove-btn" onclick="removeCartItem(${it.id})" title="Remove">✕</button></td>`; body.appendChild(tr); } updateCartTotals(); }
 function incrementQty(id){ const cart=loadCart(); const k=String(id); if(!cart.items[k]) return; cart.items[k].qty = Number(cart.items[k].qty)+1; saveCart(cart); renderCartUI(); }
@@ -469,26 +480,72 @@ function toggleCart(){ const cont=document.getElementById("cartContainer"); cont
 function updateCartTotals(){ const cart = loadCart(); const totals = calculateTotalsObj(cart); document.getElementById("cartSubtotal").textContent = totals.subtotal.toFixed(2); document.getElementById("cartGST").textContent = totals.tax.toFixed(2); document.getElementById("cartTotal").textContent = totals.grand.toFixed(2); }
 
 /* -------------------------
-   Delivery validation, payment & WhatsApp send
+   Delivery validation, payment & WhatsApp send (modified)
    ------------------------- */
 function onPaymentMethodChange(e){ const val = e.target ? e.target.value : (e.value || 'upi'); document.getElementById("upiPanel").style.display = (val==='upi')?'block':'none'; document.getElementById("codPanel").style.display = (val==='cod')?'block':'none'; document.getElementById("confirmUpiBtn").style.display = (val==='upi')?'inline-block':'none'; document.getElementById("confirmCodBtn").style.display = (val==='cod')?'inline-block':'none'; document.getElementById("billNote").textContent=''; document.getElementById("addressErrors").textContent=''; }
 
+// open UPI app deep link (unchanged)
 function openUpiDeepLink(){ const totals = calculateTotalsObj(loadCart()); const payeeVpa = MERCHANT_DISPLAY_NUMBER.replace('+','') + '@upi'; const amount = totals.grand.toFixed(2); const upiUrl = `upi://pay?pa=${encodeURIComponent(payeeVpa)}&pn=${encodeURIComponent('Coconut Waste Recycling Co.')}&am=${encodeURIComponent(amount)}&cu=INR`; window.location.href = upiUrl; }
 function copyToClipboard(text){ navigator.clipboard?.writeText(text).then(()=> showToast("Copied to clipboard")).catch(()=>{ const ta=document.createElement("textarea"); ta.value=text; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); showToast("Copied to clipboard"); }catch{ alert("Please copy: "+text);} ta.remove(); }); }
 
 function collectAndValidateDelivery(){ const name=(document.getElementById("delName").value||"").trim(); const phone=(document.getElementById("delPhone").value||"").replace(/\s+/g,""); const address=(document.getElementById("delAddress").value||"").trim(); const city=(document.getElementById("delCity").value||"").trim(); const state=(document.getElementById("delState").value||"").trim(); const pincode=(document.getElementById("delPincode").value||"").trim(); const landmark=(document.getElementById("delLandmark").value||"").trim(); const notes=(document.getElementById("delNotes").value||"").trim(); const errors=[]; if(!name) errors.push("Please enter recipient's full name."); if(!phone || !/^[6-9]\d{9}$/.test(phone)) errors.push("Please enter a valid 10-digit mobile number (start with 6-9)."); if(!address) errors.push("Please enter the delivery address."); if(pincode && !/^\d{6}$/.test(pincode)) errors.push("Pincode must be 6 digits."); return { ok: errors.length===0, errors, delivery: { name, phone, address, city, state, pincode, landmark, notes } }; }
 
-function showBill(){ const cart = loadCart(); const keys = Object.keys(cart.items||{}); if(keys.length===0){ showToast("Your cart is empty"); return; } const itemsDiv=document.getElementById("billItems"); itemsDiv.innerHTML=""; let subtotal=0; for(const k of keys){ const it=cart.items[k]; const lineTotal=Number(it.price)*Number(it.qty); subtotal+=lineTotal; const p=document.createElement("p"); p.textContent = `${it.name} × ${it.qty} = ₹${lineTotal.toFixed(2)}`; itemsDiv.appendChild(p); } const tax=Math.round((subtotal*TAX_RATE+Number.EPSILON)*100)/100; const grand=Math.round((subtotal+tax+Number.EPSILON)*100)/100; document.getElementById("billSubtotal").textContent = subtotal.toFixed(2); document.getElementById("billGST").textContent = tax.toFixed(2); document.getElementById("billGrand").textContent = grand.toFixed(2); document.getElementById("upiNumber").textContent = MERCHANT_DISPLAY_NUMBER; document.querySelectorAll('input[name="payMethod"]').forEach(i=>i.checked = (i.value==='upi')); document.getElementById("upiPanel").style.display='block'; document.getElementById("codPanel").style.display='none'; document.getElementById("confirmUpiBtn").style.display='inline-block'; document.getElementById("confirmCodBtn").style.display='none'; document.getElementById("billNote").textContent=''; document.getElementById("addressErrors").textContent=''; document.getElementById("billModal").style.display="flex"; }
+function showBill(){ const cart = loadCart(); const keys = Object.keys(cart.items||{}); if(keys.length===0){ showToast("Your cart is empty"); return; } const itemsDiv=document.getElementById("billItems"); itemsDiv.innerHTML=""; let subtotal=0; for(const k of keys){ const it=cart.items[k]; const lineTotal=Number(it.price)*Number(it.qty); subtotal+=lineTotal; const p=document.createElement("p"); p.textContent = `${it.name} × ${it.qty} = ₹${lineTotal.toFixed(2)}`; itemsDiv.appendChild(p); } const tax=Math.round((subtotal*TAX_RATE+Number.EPSILON)*100)/100; const grand=Math.round((subtotal+tax+Number.EPSILON)*100)/100; document.getElementById("billSubtotal").textContent = subtotal.toFixed(2); document.getElementById("billGST").textContent = tax.toFixed(2); document.getElementById("billGrand").textContent = grand.toFixed(2); document.getElementById("upiNumber").textContent = MERCHANT_DISPLAY_NUMBER; document.querySelectorAll('input[name="payMethod"]').forEach(i=>i.checked = (i.value==='upi')); document.getElementById("upiPanel").style.display='block'; document.getElementById("codPanel").style.display='none'; document.getElementById("confirmUpiBtn").style.display='inline-block'; document.getElementById("confirmCodBtn").style.display='none'; document.getElementById("billNote").textContent=''; document.getElementById("addressErrors").textContent=''; // reset upload area
+  resetPaymentUpload();
+  document.getElementById("billModal").style.display="flex";
+}
 
-function closeBill(){ document.getElementById("billModal").style.display="none"; }
+/* -------------------------
+   Payment screenshot helpers
+   ------------------------- */
+let uploadedPaymentScreenshotDataUrl = null;
+function resetPaymentUpload(){
+  uploadedPaymentScreenshotDataUrl = null;
+  const preview = document.getElementById("paymentScreenshotPreview");
+  if(preview) preview.innerHTML = '<span style="color:#64748b;font-size:0.95rem">No screenshot uploaded</span>';
+  const fileInput = document.getElementById("paymentScreenshotInput");
+  if(fileInput) fileInput.value = "";
+  const confirmBtn = document.getElementById("confirmUpiBtn");
+  if(confirmBtn) confirmBtn.disabled = true;
+}
+function handlePaymentScreenshotFile(file){
+  if(!file) return;
+  const valid = /^image\/(png|jpeg|jpg|webp)$/.test(file.type);
+  if(!valid){ alert("Please upload an image (PNG, JPG, or WEBP)."); return; }
+  const reader = new FileReader();
+  reader.onload = function(ev){
+    uploadedPaymentScreenshotDataUrl = ev.target.result; // base64 data URL
+    const preview = document.getElementById("paymentScreenshotPreview");
+    if(preview){
+      preview.innerHTML = `<img src="${uploadedPaymentScreenshotDataUrl}" alt="payment screenshot" style="max-width:220px;border-radius:8px;display:block;margin:6px auto;border:1px solid #e6e9ee" /><div style="text-align:center;margin-top:6px"><button class="add-btn" onclick="downloadScreenshot()">Download screenshot</button><button class="add-btn" style="background:#f97316" onclick="removeUploadedScreenshot()">Remove</button></div>`;
+    }
+    const confirmBtn = document.getElementById("confirmUpiBtn");
+    if(confirmBtn) confirmBtn.disabled = false;
+  };
+  reader.readAsDataURL(file);
+}
+function removeUploadedScreenshot(){
+  uploadedPaymentScreenshotDataUrl = null;
+  resetPaymentUpload();
+}
+function downloadScreenshot(){
+  if(!uploadedPaymentScreenshotDataUrl) return;
+  const a = document.createElement("a");
+  a.href = uploadedPaymentScreenshotDataUrl;
+  a.download = 'payment_screenshot.png';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
 
-/* WhatsApp helper: build message and open wa.me (fallback copy) */
+/* WhatsApp helper: build message and open wa.me (modified to mention screenshot) */
 function sendOrderToWhatsApp(order){
   const itemsText = (order.items||[]).map(it=>`• ${it.name} x${it.qty} = ₹${(Number(it.price)*Number(it.qty)).toFixed(2)}`).join("\n");
   const d = order.delivery||{};
   const deliveryText = [`Name: ${d.name||"-"}`, `Phone: ${d.phone||"-"}`, `Address: ${d.address||"-"}`, `City: ${d.city||"-"}`, `State: ${d.state||"-"}`, `Pincode: ${d.pincode||"-"}`, d.landmark?`Landmark: ${d.landmark}`:null, d.notes?`Notes: ${d.notes}`:null].filter(Boolean).join("\n");
   const totals = order.totals||{};
   const totalsText = `Subtotal: ₹${(totals.subtotal||0).toFixed(2)}\nGST: ₹${(totals.tax||0).toFixed(2)}\nGrand Total: ₹${(totals.grand||0).toFixed(2)}`;
+  const screenshotNote = order.paymentScreenshot ? "✔️ Payment screenshot uploaded locally. Please attach the screenshot file to this WhatsApp message before sending (cannot be auto-attached)." : "⚠️ No screenshot attached.";
   const msg = [
     `🛒 *New Order Received*`,
     `Order ID: ${order.id}`,
@@ -505,6 +562,8 @@ function sendOrderToWhatsApp(order){
     `*Totals:*`,
     totalsText,
     ``,
+    `${screenshotNote}`,
+    ``,
     `Placed at: ${new Date(order.createdAt||Date.now()).toLocaleString()}`,
     ``,
     `Please confirm.`
@@ -518,14 +577,20 @@ function sendOrderToWhatsApp(order){
 /* confirm flows (UPI pending & COD confirmed) */
 function confirmUpiPayment(){
   const ok = collectAndValidateDelivery(); if(!ok.ok){ document.getElementById("addressErrors").textContent = ok.errors.join(" "); return; }
+  // require screenshot
+  if(!uploadedPaymentScreenshotDataUrl){
+    document.getElementById("addressErrors").textContent = "Please upload your payment screenshot to confirm UPI payment.";
+    return;
+  }
   const cart = loadCart(); const totals = calculateTotalsObj(cart); const orderId = 'ORD'+Date.now();
-  const order = { id:orderId, items: Object.values(cart.items||{}), totals, paymentMethod:'UPI', upiNumber: MERCHANT_DISPLAY_NUMBER, delivery: ok.delivery, status:'pending_payment', createdAt: new Date().toISOString() };
+  const order = { id:orderId, items: Object.values(cart.items||{}), totals, paymentMethod:'UPI', upiNumber: MERCHANT_DISPLAY_NUMBER, delivery: ok.delivery, status:'pending_payment', createdAt: new Date().toISOString(), paymentScreenshot: uploadedPaymentScreenshotDataUrl };
   try{ const pend = JSON.parse(localStorage.getItem('pending_orders')||'[]'); pend.push(order); localStorage.setItem('pending_orders', JSON.stringify(pend)); }catch{ localStorage.setItem('pending_orders', JSON.stringify([order])); }
-  // Open WhatsApp with prefilled message
+  // Open WhatsApp with prefilled message (buyer should manually attach screenshot)
   sendOrderToWhatsApp(order);
-  document.getElementById("billNote").textContent = `Order ${orderId} placed (pending payment). WhatsApp opened to notify merchant.`;
+  document.getElementById("billNote").textContent = `Order ${orderId} placed (pending payment). WhatsApp opened — please attach the screenshot file to the message before sending.`;
   showToast("Order recorded as pending and WhatsApp opened for notification.");
   clearCart();
+  closeBill();
 }
 
 function confirmCodOrder(){
@@ -542,10 +607,27 @@ function confirmCodOrder(){
 /* Toast + init */
 function showToast(msg, ms=2000){ const t=document.createElement("div"); t.textContent=msg; Object.assign(t.style,{position:"fixed",bottom:"20px",right:"20px",background:"#111827",color:"#fff",padding:"10px 14px",borderRadius:"8px",boxShadow:"0 6px 20px rgba(0,0,0,0.2)",zIndex:9999,opacity:0,transition:"opacity .18s ease"}); document.body.appendChild(t); requestAnimationFrame(()=> t.style.opacity=1); setTimeout(()=>{ t.style.opacity=0; setTimeout(()=> t.remove(),220); }, ms); }
 
-document.addEventListener("DOMContentLoaded", ()=>{ renderProducts(); renderCartUI(); document.getElementById("year").textContent = new Date().getFullYear(); });
+document.addEventListener("DOMContentLoaded", ()=>{
+  renderProducts(); renderCartUI(); document.getElementById("year").textContent = new Date().getFullYear();
+  // wire file input change (the input is in the bill modal markup)
+  const fileInput = document.getElementById("paymentScreenshotInput");
+  if(fileInput){
+    fileInput.addEventListener("change", (ev)=> {
+      const f = ev.target.files && ev.target.files[0];
+      if(f) handlePaymentScreenshotFile(f);
+    });
+  }
+  // disable confirmUpiBtn by default
+  const confirmUpiBtn = document.getElementById("confirmUpiBtn");
+  if(confirmUpiBtn) confirmUpiBtn.disabled = true;
+});
 window.addEventListener("click", (e)=>{ if(e.target===productModal) closeProductModal(); const billM = document.getElementById("billModal"); if(e.target===billM) closeBill(); });
 window.addEventListener("storage", (e)=>{ if(e.key===CART_KEY) renderCartUI(); });
 
+// expose a small helper so modal reset works
+window.resetPaymentUpload = resetPaymentUpload;
 </script>
+
 </body>
 </html>
+
