@@ -1,451 +1,819 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Admin — Orders | Coconut Waste Recycling Co.</title>
-<style>
-  :root{--accent:#2ebd8f;--bg:#f7fafb;--card:#fff;--muted:#64748b;--danger:#ef4444;--blue:#2563eb}
-  *{box-sizing:border-box}body{font-family:Inter,ui-sans-serif,system-ui,Arial,sans-serif;margin:0;background:var(--bg);color:#0f172a}
-  header{background:linear-gradient(90deg,#ecffef,#f0f9ff);padding:18px 20px;box-shadow:0 4px 18px rgba(2,6,23,0.06);display:flex;justify-content:space-between;align-items:center;gap:12px}
-  header h1{font-size:18px;margin:0;color:var(--accent)}
-  header .meta{color:var(--muted);font-size:13px}
-  .wrap{max-width:1100px;margin:20px auto;padding:0 16px}
-  .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
-  .controls input[type="search"]{padding:10px 12px;border-radius:10px;border:1px solid #e6e9ee;min-width:220px}
-  .controls select, .controls button{padding:10px 12px;border-radius:10px;border:none;background:var(--accent);color:#fff;cursor:pointer}
-  .controls button.secondary{background:#94a3b8}
-  .grid{display:grid;grid-template-columns:1fr 360px;gap:16px}
-  .panel{background:var(--card);border-radius:12px;padding:14px;box-shadow:0 8px 30px rgba(2,6,23,0.06)}
-  .list{max-height:64vh;overflow:auto}
-  .order-row{display:flex;justify-content:space-between;align-items:flex-start;padding:10px;border-bottom:1px solid #f1f5f9}
-  .order-left{display:flex;gap:12px;align-items:flex-start}
-  .thumb{width:64px;height:64px;border-radius:8px;object-fit:cover;background:#f3f4f6;border:1px solid #eef2f7}
-  .order-meta{font-size:13px}
-  .order-meta h4{margin:0 0 6px 0;font-size:15px}
-  .order-actions{display:flex;gap:8px;align-items:center}
-  .btn{padding:8px 10px;border-radius:8px;border:none;cursor:pointer;font-weight:700}
-  .btn.green{background:#10b981;color:#fff}
-  .btn.orange{background:#f97316;color:#fff}
-  .btn.gray{background:#94a3b8;color:#fff}
-  .btn.danger{background:var(--danger);color:#fff}
-  .details{font-size:13px;color:var(--muted);margin-top:6px}
-  .empty{padding:18px;text-align:center;color:var(--muted)}
-  .side{display:flex;flex-direction:column;gap:10px}
-  .side .card{padding:12px;border-radius:10px;background:#fff;border:1px solid #eef2f7}
-  .preview-img{max-width:100%;border-radius:8px}
-  footer{max-width:1100px;margin:14px auto;padding:0 16px;color:var(--muted);font-size:13px;text-align:center}
-  .small{font-size:12px;color:var(--muted)}
-  @media(max-width:960px){.grid{grid-template-columns:1fr}.order-left{flex-direction:row} .thumb{width:54px;height:54px}}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EcoCoco Value</title>
+  <meta name="theme-color" content="#2ebd8f" />
+  <style>
+  
+    :root{
+      --accent:#2ebd8f;
+      --accent-dark:#24976f;
+      --bg:#ffffff;
+      --muted:#64748b;
+      --dark:#0f172a;
+      --light:#f8fafc;
+      --shadow: 0 8px 30px rgba(2,6,23,0.06);
+      --card-shadow: 0 6px 18px rgba(2,6,23,0.06);
+      --radius:12px;
+      --max-width:1100px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family: Inter, Poppins, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:var(--bg);
+      color:var(--dark);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.5;
+      -webkit-touch-callout:none;
+    }
+
+    /* container */
+    .container{max-width:var(--max-width);margin:0 auto;padding:0 16px;}
+
+    /* header / nav */
+    header{position:sticky;top:0;z-index:60;background:linear-gradient(180deg,#ffffff,#f7fff6);box-shadow:var(--shadow)}
+    .nav-row{display:flex;align-items:center;gap:12px;padding:12px 0}
+    .logo{font-weight:800;color:var(--accent);font-size:1.2rem;letter-spacing:0.3px}
+    .nav-links{margin-left:auto;display:flex;gap:12px;align-items:center}
+    .nav-links a{color:var(--dark);text-decoration:none;padding:8px 10px;border-radius:10px;font-weight:600;font-size:0.95rem}
+    .nav-links a:hover{background:rgba(46,189,143,0.08);color:var(--accent-dark)}
+    .hamburger{display:none;background:none;border:0;padding:8px;border-radius:8px;cursor:pointer}
+    .hamburger .bar{display:block;height:2px;background:var(--dark);width:20px;margin:4px 0;border-radius:2px}
+
+    /* header small note */
+    .top-meta{font-size:0.85rem;color:var(--muted);margin-top:6px}
+
+    /* hero */
+    .hero{padding:64px 0;text-align:center;background:linear-gradient(180deg,#fff,#e6fff2)}
+    .hero h1{font-size:2.2rem;color:var(--accent);margin-bottom:8px}
+    .hero p{max-width:760px;margin:0 auto;color:var(--muted);font-size:1rem}
+
+    /* products */
+    #products{padding:30px 0}
+    #products h2{text-align:center;color:var(--accent);margin-bottom:18px}
+    .product-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:stretch}
+    .product-card{background:#fff;border-radius:var(--radius);box-shadow:var(--card-shadow);padding:14px;display:flex;flex-direction:column;justify-content:space-between;min-height:320px}
+    .product-card img{width:100%;height:170px;object-fit:cover;border-radius:10px;margin-bottom:10px}
+    .product-card h3{font-size:1.05rem;margin:6px 0;color:var(--dark)}
+    .product-card p.desc{color:var(--muted);font-size:0.92rem;min-height:42px}
+    .product-meta{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:10px}
+    .price{color:var(--accent);font-weight:800}
+    .product-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    .btn{padding:10px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:700}
+    .btn-primary{background:var(--accent);color:#fff}
+    .btn-primary:active{background:var(--accent-dark)}
+    .btn-secondary{background:#94a3b8;color:#fff}
+.product-card img {
+  width: 100%;
+  height: 230px;
+  border-radius: 14px;
+  object-fit: cover;
+  background: #f3f4f6;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  will-change: transform;
+}
+.product-card img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+/* On small screens, make images taller and center focus */
+@media (max-width: 640px) {
+  .product-card img {
+    height: 260px;
+    border-radius: 12px;
+  }
+}
+.product-card {
+  background: linear-gradient(180deg, #ffffff, #f9fffb);
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+  padding: 18px;
+  text-align: center;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+/* Improved product detail modal */
+#productDetail {
+  text-align: left;
+  max-width: 100%;
+}
+
+.detail-image {
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  border-radius: 14px;
+  background: #f3f4f6;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease;
+  margin-bottom: 16px;
+}
+
+.detail-image:hover {
+  transform: scale(1.05);
+}
+
+#productDetail h2 {
+  color: var(--accent);
+  margin-top: 8px;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+#productDetail p {
+  color: var(--muted);
+  margin-top: 6px;
+  font-size: 0.95rem;
+}
+
+#productDetail h4 {
+  margin-top: 16px;
+  font-size: 1.1rem;
+  color: var(--accent);
+}
+
+.uses-list {
+  margin-left: 22px;
+  margin-top: 8px;
+  color: var(--dark);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+#productDetail .price {
+  font-size: 1.1rem;
+  color: var(--accent);
+  font-weight: 800;
+  margin-top: 12px;
+}
+
+#productDetail button {
+  margin-top: 14px;
+  width: 100%;
+  font-size: 1rem;
+  padding: 12px;
+  border-radius: 12px;
+}
+
+/* Mobile optimization */
+@media (max-width: 640px) {
+  .detail-image {
+    max-height: 240px;
+    border-radius: 12px;
+  }
+  #productDetail h2 {
+    font-size: 1.2rem;
+  }
+  #productDetail p, .uses-list li {
+    font-size: 0.9rem;
+  }
+}
+
+    /* cart */
+    .cart-container{max-width:900px;margin:22px auto;padding:16px;background:var(--light);border-radius:12px;box-shadow:var(--card-shadow)}
+    .cart-table{width:100%;border-collapse:collapse}
+    .cart-table th,.cart-table td{padding:10px;border-bottom:1px solid #e6eef3;text-align:left;font-size:0.95rem}
+    .cart-summary{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+
+    /* modal */
+    .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:120;justify-content:center;align-items:center;padding:18px}
+    .modal-content{background:#fff;border-radius:12px;max-width:720px;width:100%;max-height:92vh;overflow:auto;padding:18px;box-shadow:var(--card-shadow)}
+    .modal-full{border-radius:12px;padding:18px}
+    .close-btn{background:none;border:0;font-size:1.4rem;cursor:pointer;color:var(--muted)}
+    .field{margin:10px 0}
+    .field label{display:block;font-size:0.9rem;color:var(--muted);margin-bottom:6px}
+    input[type="text"],input[type="tel"],textarea{width:100%;padding:10px;border-radius:10px;border:1px solid #e6eef3;font-size:0.95rem}
+    textarea{min-height:80px;resize:vertical}
+
+    /* product details */
+    .detail-image{width:100%;height:220px;object-fit:cover;border-radius:10px;margin-bottom:10px}
+    .uses-list{margin-left:18px;color:var(--dark)}
+
+    /* about/impact/contact */
+    .about-v2{background:var(--light);padding:40px 0}
+    .about-header{text-align:center;max-width:900px;margin:0 auto 18px}
+    .founder-section{display:grid;grid-template-columns:260px 1fr;gap:20px;align-items:center;max-width:1000px;margin:20px auto}
+    .founder-photo{width:260px;height:260px;border-radius:50%;object-fit:cover;border:6px solid var(--accent)}
+    .team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px}
+    .team-member{background:#fff;padding:14px;border-radius:12px;box-shadow:var(--card-shadow);text-align:center}
+    .impact-section{text-align:center;padding:18px 12px}
+    .impact-grid{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+    .stat{background:#fff;padding:16px;border-radius:12px;box-shadow:var(--card-shadow);width:150px}
+
+    /* footer */
+    footer{background:var(--dark);color:#e6f0ff;padding:18px;text-align:center;margin-top:28px}
+
+    /* small screen styles */
+    @media (max-width: 980px){
+      .product-grid{grid-template-columns:repeat(2,1fr)}
+      .team-grid{grid-template-columns:repeat(2,1fr)}
+      .founder-section{grid-template-columns:1fr}
+      .founder-photo{margin:0 auto}
+    }
+    @media (max-width: 640px){
+      .nav-links{display:none}
+      .hamburger{display:inline-flex;margin-left:auto}
+      .hero{padding:40px 12px}
+      .hero h1{font-size:1.6rem}
+      .product-grid{grid-template-columns:1fr;gap:12px}
+      .product-card{min-height:unset;padding:12px}
+      .product-card img{height:180px}
+      .modal{align-items:flex-end;padding:0}
+      .modal-content{border-radius:18px 18px 0 0;max-height:88vh;padding:14px}
+      .btn{padding:12px 14px;font-size:1rem;border-radius:12px}
+      .cart-container{margin:14px 12px;padding:12px}
+      .founder-photo{width:180px;height:180px;border-width:5px}
+      .team-grid{grid-template-columns:1fr}
+      .impact-grid{flex-direction:column}
+      .stat{width:100%}
+      .top-meta{display:none}
+    }
+
+    /* helpers */
+    .hidden{display:none}
+    .center{text-align:center}
+    .muted{color:var(--muted)}
+    
+  </style>
 </head>
 <body>
-
-<header>
-  <div>
-    <h1>Admin Dashboard — Orders</h1>
-    <div class="meta">View & manage pending / confirmed orders</div>
-  </div>
-  <div class="meta" id="adminClock">—</div>
-</header>
-
-<div class="wrap">
-  <div class="controls">
-    <input id="searchInput" type="search" placeholder="Search by order id / name / phone / city" />
-    <select id="filterSelect">
-      <option value="all">All orders</option>
-      <option value="pending">Pending</option>
-      <option value="confirmed">Confirmed</option>
-    </select>
-    <button id="refreshBtn" class="secondary">Refresh</button>
-    <button id="exportCsvBtn">Export CSV</button>
-    <button id="clearRejectedBtn" class="secondary">Clear Rejected</button>
-    <div style="margin-left:auto" class="small">Local-only admin (client-side). Use server auth for production.</div>
-  </div>
-
-  <div class="grid">
-    <div class="panel">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <strong>Orders</strong>
-        <div class="small" id="counts">Loading…</div>
+  <header>
+    <div class="container nav-row" role="banner">
+      <div style="display:flex;flex-direction:column;">
+        <div class="logo">EcoCoco Value.</div>
+        <div class="top-meta muted">Transforming coconut waste into valuable eco-products</div>
       </div>
 
-      <div style="display:flex;gap:8px;margin-bottom:10px">
-        <button class="btn green" onclick="bulkConfirmSelected()">Confirm selected</button>
-        <button class="btn orange" onclick="bulkRejectSelected()">Reject selected</button>
-        <button class="btn gray" onclick="selectAll()">Select all</button>
-        <button class="btn gray" onclick="clearSelection()">Clear</button>
-      </div>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#about">About</a>
+        <a href="#products">Products</a>
+        <a href="#impact">Impact</a>
+        <a href="#contact">Contact</a>
+      </nav>
 
-      <div class="list" id="orderList"></div>
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+      </button>
     </div>
+  </header>
 
-    <div class="side">
-      <div class="card panel" id="detailCard">
-        <strong>Order details</strong>
-        <div id="detailContent" style="margin-top:10px">
-          <div class="empty">Select an order to see details</div>
+  <!-- mobile nav overlay -->
+  <div id="mobileNav" class="modal hidden" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-content" style="max-width:420px;margin:40px auto;border-radius:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <strong style="color:var(--accent)">Menu</strong>
+        <button class="close-btn" id="mobileNavClose">&times;</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;padding-top:8px">
+        <a href="#about" class="btn" style="background:transparent;text-align:left;padding:12px;border-radius:10px" onclick="closeMobileNav()">About</a>
+        <a href="#products" class="btn" style="background:transparent;text-align:left;padding:12px;border-radius:10px" onclick="closeMobileNav()">Products</a>
+        <a href="#impact" class="btn" style="background:transparent;text-align:left;padding:12px;border-radius:10px" onclick="closeMobileNav()">Impact</a>
+        <a href="#contact" class="btn" style="background:transparent;text-align:left;padding:12px;border-radius:10px" onclick="closeMobileNav()">Contact</a>
+        <a href="admin.html" class="btn btn-primary" style="text-align:center">Admin</a>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <h1>Transforming Coconut Waste Into Green Wealth</h1>
+        <p>We recycle coconut husks, shells, and coir into sustainable, eco-friendly products — empowering rural farmers and building a cleaner planet.</p>
+      </div>
+    </section>
+
+    <!-- Products -->
+    <section id="products" class="container">
+      <h2>Our Eco Products</h2>
+      <div id="productGrid" class="product-grid" aria-live="polite"></div>
+    </section>
+
+    <!-- Cart (hidden until items) -->
+    <section id="cartSection" class="cart-container hidden" aria-live="polite">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h3>🛍 Your Cart</h3>
+        <div><button class="btn btn-secondary" onclick="clearCart()">Clear</button></div>
+      </div>
+
+      <div style="overflow:auto;margin-top:8px">
+        <table class="cart-table" id="cartTable" role="table" aria-label="Cart items">
+          <thead><tr><th>Item</th><th>Price</th><th>Qty</th><th>Total</th></tr></thead>
+          <tbody id="cartBody"></tbody>
+        </table>
+      </div>
+
+      <div class="cart-summary">
+        <div><strong>Subtotal:</strong> ₹<span id="subTotal">0.00</span></div>
+        <div><strong>GST (18%):</strong> ₹<span id="gst">0.00</span></div>
+        <div style="font-size:1.05rem"><strong>Grand Total:</strong> ₹<span id="grand">0.00</span></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+          <button class="btn btn-primary" onclick="openInvoice()">Proceed to Checkout</button>
+          <button class="btn btn-secondary" onclick="scrollToProducts()">Continue Shopping</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- About / Team / Impact -->
+    <section id="about" class="about-v2">
+      <div class="about-header container">
+        <h2>About Us</h2>
+        <p><strong>Coconut Waste Recycling Co.</strong> transforms discarded coconut waste into eco-products like cocopeat, coir fiber, compost, and activated carbon. We blend innovation with community empowerment to create a circular, sustainable future where nothing goes to waste.</p>
+      </div>
+
+      <div class="founder-section">
+        <img class="founder-photo" src="https://i.postimg.cc/6p3PgX35/Whats-App-Image-2025-11-11-at-3-20-04-PM.jpg" alt="Founder">
+        <div>
+          <h3>Meet the Founder —VENNELA</h3>
+          <p class="muted">Vennela is an environmental entrepreneur who founded this venture to redefine waste management in India. His vision is to transform agricultural by-products into sustainable resources that protect the planet while strengthening communities.</p>
+          <p style="margin-top:8px;font-style:italic;color:var(--accent)">“Our goal is to make every coconut count — for farmers, for soil health, and for our future.”</p>
         </div>
       </div>
 
-      <div class="card panel">
-        <strong>Quick actions</strong>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
-          <button class="btn green" onclick="openAllScreenshots()">Open all screenshots</button>
-          <button class="btn gray" onclick="exportCSVAll()">Export ALL orders CSV</button>
-          <button class="btn danger" onclick="clearAllLocal()">Clear all local orders</button>
+      <div class="container">
+        <div class="team-grid" aria-label="Team">
+          <div class="team-member"><img src="https://i.postimg.cc/6p3PgX35/Whats-App-Image-2025-11-11-at-3-20-04-PM.jpg" style="width:88px;height:88px;border-radius:50%;object-fit:cover;margin:0 auto 8px"><h4>S.Vennela</h4><p class="muted">Founder & CEO</p></div>
+          <div class="team-member"><img src="https://i.postimg.cc/qM0VmSyG/Whats-App-Image-2025-11-11-at-3-20-04-PM-1.jpg" style="width:88px;height:88px;border-radius:50%;object-fit:cover;margin:0 auto 8px"><h4>V.Hemalaya</h4><p class="muted">Head of Sustainability</p></div>
+          <div class="team-member"><img src="https://i.postimg.cc/PqDw5CJn/Whats-App-Image-2025-11-11-at-3-20-05-PM.jpg" style="width:88px;height:88px;border-radius:50%;object-fit:cover;margin:0 auto 8px"><h4>G.Abhijith</h4><p class="muted">Production Engineer</p></div>
+          <div class="team-member"><img src="https://i.postimg.cc/WbmYh4Dz/Whats-App-Image-2025-10-25-at-9-31-07-PM.jpg" style="width:88px;height:88px;border-radius:50%;object-fit:cover;margin:0 auto 8px"><h4>S.sai Ruthik</h4><p class="muted">Marketing</p></div>
         </div>
+      </div>
+
+      <div id="impact" class="impact-section container">
+        <h3>Our Impact</h3>
+        <div class="impact-grid">
+          <div class="stat center"><h3 style="margin:0;color:var(--accent)">10+ Tons</h3><p class="muted">Waste Recycled</p></div>
+          <div class="stat center"><h3 style="margin:0;color:var(--accent)">50+</h3><p class="muted">Farmers Engaged</p></div>
+          <div class="stat center"><h3 style="margin:0;color:var(--accent)">20+</h3><p class="muted">Products Developed</p></div>
+          <div class="stat center"><h3 style="margin:0;color:var(--accent)">100%</h3><p class="muted">Eco Operations</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" style="padding:28px 0">
+      <div class="container center">
+        <h2 style="color:var(--accent)">Contact Us</h2>
+        <p class="muted">📞 +91-8639533425 | 📧 sairuthik31@gmail.com</p>(For bulk orders please contact us)
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      © <span id="year"></span> Coconut Waste Recycling Co. | Designed by Ruthik 🌴
+    </div>
+  </footer>
+
+  <!-- Product details modal (separate) -->
+  <div id="productModal" class="modal" aria-hidden="true">
+    <div class="modal-content modal-full" role="dialog" aria-modal="true">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <strong style="color:var(--accent)">Product details</strong>
+        <button class="close-btn" onclick="closeProductModal()">×</button>
+      </div>
+      <div id="productDetail"></div>
+    </div>
+  </div>
+
+  <!-- Invoice modal -->
+  <div id="invoiceModal" class="modal" aria-hidden="true">
+    <div class="modal-content modal-full" role="dialog" aria-modal="true">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <strong style="color:var(--accent)">🧾 Order Invoice</strong>
+        <button class="close-btn" onclick="closeInvoice()">×</button>
+      </div>
+
+      <div id="orderItems"></div>
+
+      <div style="margin-top:12px">
+        <div class="field"><label>Full name</label><input id="fullName" type="text" placeholder="Recipient full name" /></div>
+        <div class="field"><label>Phone</label><input id="phone" type="tel" placeholder="10-digit mobile number" /></div>
+        <div class="field"><label>Address</label><textarea id="address" placeholder="House, street, locality"></textarea></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div style="flex:1" class="field"><label>City</label><input id="city" type="text" /></div>
+          <div style="width:140px" class="field"><label>Pincode</label><input id="pincode" type="text" /></div>
+        </div>
+
+        <div class="field" style="margin-top:6px">
+          <label style="display:block"><input type="radio" name="pay" value="upi" checked onchange="togglePaymentMode()"> UPI (Pay & upload screenshot)</label>
+          <label style="display:block;margin-top:6px"><input type="radio" name="pay" value="cod" onchange="togglePaymentMode()"> Cash on Delivery (COD)</label>
+        </div>
+
+        <!-- UPI panel -->
+        <div id="upiPanel" class="field" style="display:none;background:#f8fafc;padding:12px;border-radius:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+            <div>
+              <div style="font-weight:700">Pay via UPI</div>
+              <div class="muted">Mobile / UPI:</div>
+              <div style="font-size:1.05rem;font-weight:800">+91-8639533425</div>
+            </div>
+            <div>
+              <button class="btn btn-primary" onclick="copyUPINumber()">Copy</button>
+            </div>
+          </div>
+          <div style="margin-top:10px">
+            <label style="display:block;margin-bottom:6px">Upload payment screenshot (PNG / JPG / WEBP)</label>
+            <input id="screenshot" type="file" accept="image/*">
+          </div>
+        </div>
+
+        <!-- COD panel -->
+        <div id="codPanel" class="field" style="display:none;background:#fff6ee;padding:12px;border-radius:10px">
+          <div style="font-weight:700">Cash on Delivery selected</div>
+          <div class="muted">Please keep cash ready when the delivery arrives.</div>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="placeOrder()">Place Order</button>
+          <button class="btn btn-secondary" onclick="closeInvoice()">Cancel</button>
+        </div>
+
+        <div id="orderMsg" style="margin-top:10px;color:var(--muted)"></div>
       </div>
     </div>
   </div>
-</div>
 
-<footer>
-  © <span id="year"></span> Coconut Waste Recycling Co. — Admin console (client-side only)
-</footer>
+  <!-- Mobile nav is handled above -->
 
-<script>
-/*
-  admin.html
-  - Reads localStorage keys: 'pending_orders', 'confirmed_orders'
-  - UI: list orders, view details, confirm/reject/revert, download screenshots, export CSV
-  - Simple password gate on load (default: admin123). Client-side only.
-*/
+  <!-- Firebase + App script -->
+  <script type="module">
+    // Firebase CDN (modular)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+    import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js";
 
-const ADMIN_PASSWORD = 'admin123'; // change as desired (client-side only)
-const PENDING_KEY = 'pending_orders';
-const CONFIRMED_KEY = 'confirmed_orders';
-const REJECTED_KEY = 'rejected_orders'; // optional store for rejects
+    // ----- REPLACE with your Firebase config if different -----
+    const firebaseConfig = {
+      apiKey: "AIzaSyBp2OlhOi8LD_s4bXrG_ynwvAo03CT7GDo",
+      authDomain: "ecococo.firebaseapp.com",
+      projectId: "ecococo",
+      storageBucket: "ecococo.firebasestorage.app",
+      messagingSenderId: "138194091561",
+      appId: "1:138194091561:web:8a91118321e12d73ef6638"
+    };
+    // init
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+    // anonymous auth (so client can upload screenshots and write orders)
+    signInAnonymously(auth).catch(e => console.warn("Auth error", e.message));
 
-// require password
-(function gate(){
-  let tries = 0;
-  while(true){
-    const p = prompt("Enter admin password to access the admin page:");
-    if(p === null){ document.body.innerHTML = "<p style='padding:20px'>Access cancelled.</p>"; throw new Error('Admin access cancelled'); }
-    if(p === ADMIN_PASSWORD) break;
-    tries++;
-    alert("Incorrect password.");
-    if(tries >= 4){ alert("Too many attempts. Reload to try again."); document.body.innerHTML = "<p style='padding:20px'>Access denied.</p>"; throw new Error('Too many attempts'); }
-  }
-})();
-
-// helpers for storage
-function getPending(){ try{ return JSON.parse(localStorage.getItem(PENDING_KEY) || '[]'); }catch(e){ console.error(e); return []; } }
-function setPending(v){ localStorage.setItem(PENDING_KEY, JSON.stringify(v || [])); }
-function getConfirmed(){ try{ return JSON.parse(localStorage.getItem(CONFIRMED_KEY) || '[]'); }catch(e){ console.error(e); return []; } }
-function setConfirmed(v){ localStorage.setItem(CONFIRMED_KEY, JSON.stringify(v || [])); }
-function getRejected(){ try{ return JSON.parse(localStorage.getItem(REJECTED_KEY) || '[]'); }catch(e){ console.error(e); return []; } }
-function setRejected(v){ localStorage.setItem(REJECTED_KEY, JSON.stringify(v || [])); }
-
-// UI state
-let selectedOrderIds = new Set();
-let lastSelectedId = null;
-
-// format helpers
-function fmtDate(iso){ try{ return new Date(iso).toLocaleString(); }catch(e){ return iso||'-'; } }
-function money(n){ return '₹' + (Number(n||0)).toFixed(2); }
-
-// render order list
-function renderList(){
-  const filter = document.getElementById('filterSelect').value;
-  const q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
-  let orders = [];
-  if(filter === 'confirmed') orders = getConfirmed().slice().reverse();
-  else if(filter === 'pending') orders = getPending().slice().reverse();
-  else orders = getPending().slice().reverse().concat(getConfirmed().slice().reverse());
-  const list = document.getElementById('orderList');
-  list.innerHTML = '';
-  if(!orders.length){ list.innerHTML = '<div class="empty">No orders found.</div>'; updateCounts(); return; }
-
-  orders.forEach(o=>{
-    const id = o.id || ('ORD'+(Math.random()*1e12|0));
-    // search filter
-    const hay = `${id} ${o.delivery?.name||''} ${o.delivery?.phone||''} ${o.delivery?.city||''}`.toLowerCase();
-    if(q && !hay.includes(q)) return;
-
-    const row = document.createElement('div');
-    row.className = 'order-row';
-    row.dataset.orderId = id;
-
-    const left = document.createElement('div'); left.className = 'order-left';
-    const img = document.createElement('img'); img.className = 'thumb';
-    img.alt = 'screenshot';
-    if(o.paymentScreenshot) img.src = o.paymentScreenshot;
-    else img.src = 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="120" height="80"><rect width="100%" height="100%" fill="#f3f4f6"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#94a3b8" font-size="12">no image</text></svg>`);
-    img.addEventListener('click', ()=> viewScreenshot(id));
-    left.appendChild(img);
-
-    const meta = document.createElement('div'); meta.className = 'order-meta';
-    const title = document.createElement('h4'); title.textContent = `${id} ${o.paymentMethod ? '• '+o.paymentMethod : ''}`;
-    meta.appendChild(title);
-    const small = document.createElement('div'); small.className = 'small';
-    small.innerHTML = `<div style="font-weight:700">${o.delivery?.name || '-'}</div>
-      <div class="details">${o.delivery?.phone || '-'} • ${o.delivery?.city || '-'} • ${fmtDate(o.createdAt)}</div>`;
-    meta.appendChild(small);
-    left.appendChild(meta);
-
-    const right = document.createElement('div'); right.className = 'order-actions';
-    const chk = document.createElement('input'); chk.type = 'checkbox'; chk.style.marginRight='6px';
-    chk.checked = selectedOrderIds.has(id);
-    chk.addEventListener('change', (ev)=> {
-      if(ev.target.checked) selectedOrderIds.add(id); else selectedOrderIds.delete(id);
-      lastSelectedId = id;
-      renderCounts(); // update selection count
-    });
-    right.appendChild(chk);
-
-    const viewBtn = document.createElement('button'); viewBtn.className = 'btn gray'; viewBtn.textContent = 'View';
-    viewBtn.onclick = ()=> showDetails(o);
-    right.appendChild(viewBtn);
-
-    // Confirm / Reject buttons based on status
-    const isConfirmed = (getConfirmed()||[]).some(x=>x.id === id);
-    if(!isConfirmed){
-      const confirmBtn = document.createElement('button'); confirmBtn.className = 'btn green'; confirmBtn.textContent = 'Confirm';
-      confirmBtn.onclick = ()=> confirmOrder(id);
-      right.appendChild(confirmBtn);
-    } else {
-      const revertBtn = document.createElement('button'); revertBtn.className = 'btn orange'; revertBtn.textContent = 'Revert';
-      revertBtn.onclick = ()=> revertOrder(id);
-      right.appendChild(revertBtn);
-    }
-    const rejBtn = document.createElement('button'); rejBtn.className = 'btn danger'; rejBtn.textContent = 'Reject';
-    rejBtn.onclick = ()=> rejectOrder(id);
-    right.appendChild(rejBtn);
-
-    row.appendChild(left);
-    row.appendChild(right);
-    list.appendChild(row);
-  });
-
-  updateCounts();
-}
-
-// show details in side panel
-function showDetails(order){
-  const content = document.getElementById('detailContent');
-  const id = order.id || '—';
-  const itemsHtml = (order.items||[]).map(it=>`<div style="display:flex;justify-content:space-between;margin:4px 0"><div>${escapeHtml(it.name)} × ${it.qty}</div><div>${money(it.price*it.qty)}</div></div>`).join('');
-  content.innerHTML = `
-    <div style="font-weight:700;margin-bottom:6px">${id}</div>
-    <div style="font-size:14px">${escapeHtml(order.delivery?.name||'-')} • ${escapeHtml(order.delivery?.phone||'-')}</div>
-    <div class="small" style="margin-top:6px">${escapeHtml(order.delivery?.address||'-')} ${escapeHtml(order.delivery?.city||'')} ${escapeHtml(order.delivery?.state||'')} • ${order.delivery?.pincode||''}</div>
-    <div style="margin-top:10px"><strong>Items</strong>${itemsHtml || '<div class="small">No items</div>'}</div>
-    <div style="margin-top:10px"><strong>Totals</strong>
-      <div class="small">Subtotal: ${money(order.totals?.subtotal)}</div>
-      <div class="small">GST: ${money(order.totals?.tax)}</div>
-      <div class="small">Grand: ${money(order.totals?.grand)}</div>
-    </div>
-    <div style="margin-top:10px"><strong>Notes</strong><div class="small">${escapeHtml(order.delivery?.notes||'—')}</div></div>
-    <div style="margin-top:10px">${order.paymentScreenshot ? `<img src="${order.paymentScreenshot}" class="preview-img" alt="screenshot" />` : '<div class="small">No screenshot attached</div>'}</div>
-    <div style="display:flex;gap:8px;margin-top:10px">
-      <button class="btn green" onclick="confirmOrder('${id}')">Confirm</button>
-      <button class="btn danger" onclick="rejectOrder('${id}')">Reject</button>
-      <button class="btn gray" onclick="downloadScreenshotById('${id}')">Download screenshot</button>
-    </div>
-  `;
-  lastSelectedId = id;
-}
-
-// basic HTML escaping
-function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]); }
-
-// Order actions
-function confirmOrder(orderId){
-  const pend = getPending();
-  const idx = pend.findIndex(x=>x.id === orderId);
-  if(idx === -1){
-    // maybe it is in confirmed already
-    alert('Order not found in pending_orders.');
-    return;
-  }
-  const [order] = pend.splice(idx,1);
-  order.status = 'confirmed_cod';
-  const confirmed = getConfirmed();
-  confirmed.push(order);
-  setPending(pend);
-  setConfirmed(confirmed);
-  renderList();
-  alert('Order confirmed: ' + orderId);
-}
-
-function revertOrder(orderId){
-  const confirmed = getConfirmed();
-  const idx = confirmed.findIndex(x=>x.id === orderId);
-  if(idx === -1){ alert('Order not found in confirmed_orders.'); return; }
-  const [order] = confirmed.splice(idx,1);
-  order.status = 'pending';
-  const pend = getPending();
-  pend.push(order);
-  setPending(pend);
-  setConfirmed(confirmed);
-  renderList();
-  alert('Order reverted to pending: ' + orderId);
-}
-
-function rejectOrder(orderId){
-  // move from pending or confirmed into rejected list
-  let moved = null;
-  let pend = getPending();
-  let confirmed = getConfirmed();
-  let idx = pend.findIndex(x=>x.id === orderId);
-  if(idx !== -1){ moved = pend.splice(idx,1)[0]; setPending(pend); }
-  else { idx = confirmed.findIndex(x=>x.id === orderId); if(idx !== -1){ moved = confirmed.splice(idx,1)[0]; setConfirmed(confirmed); } }
-  if(!moved){ alert('Order not found.'); return; }
-  moved.status = 'rejected';
-  const rej = getRejected(); rej.push(moved); setRejected(rej);
-  renderList();
-  alert('Order rejected: ' + orderId);
-}
-
-// bulk selection helpers
-function bulkConfirmSelected(){
-  if(selectedOrderIds.size === 0){ alert('No orders selected'); return; }
-  const pend = getPending();
-  const confirmed = getConfirmed();
-  const toMove = pend.filter(o=> selectedOrderIds.has(o.id));
-  if(toMove.length === 0){ alert('Selected orders are not in pending list'); return; }
-  // move them
-  const remainingPend = pend.filter(o=> !selectedOrderIds.has(o.id));
-  toMove.forEach(t=> t.status = 'confirmed_cod');
-  confirmed.push(...toMove);
-  setPending(remainingPend);
-  setConfirmed(confirmed);
-  selectedOrderIds.clear();
-  renderList();
-  alert(`Confirmed ${toMove.length} order(s).`);
-}
-function bulkRejectSelected(){
-  if(selectedOrderIds.size === 0){ alert('No orders selected'); return; }
-  const pend = getPending();
-  const confirmed = getConfirmed();
-  const toReject = [];
-  const remainingPend = [];
-  pend.forEach(o=> selectedOrderIds.has(o.id) ? toReject.push(o) : remainingPend.push(o));
-  // also check confirmed list
-  const remainingConf = [];
-  confirmed.forEach(o=> selectedOrderIds.has(o.id) ? toReject.push(o) : remainingConf.push(o));
-  setPending(remainingPend);
-  setConfirmed(remainingConf);
-  const rej = getRejected();
-  toReject.forEach(t=> t.status = 'rejected');
-  rej.push(...toReject);
-  setRejected(rej);
-  selectedOrderIds.clear();
-  renderList();
-  alert(`Rejected ${toReject.length} order(s).`);
-}
-function selectAll(){ const nodes = document.querySelectorAll('#orderList .order-row'); nodes.forEach(n=> selectedOrderIds.add(n.dataset.orderId)); renderList(); renderCounts(); }
-function clearSelection(){ selectedOrderIds.clear(); renderList(); renderCounts(); }
-
-// view / download screenshots
-function viewScreenshot(orderId){
-  // search pending and confirmed
-  const all = getPending().concat(getConfirmed()).concat(getRejected());
-  const o = all.find(x=>x.id === orderId);
-  if(!o){ alert('Order not found'); return; }
-  if(!o.paymentScreenshot){ alert('No screenshot stored for this order'); return; }
-  const w = window.open(); w.document.body.style.margin='0'; const img = w.document.createElement('img'); img.src = o.paymentScreenshot; img.style.maxWidth='100%'; w.document.body.appendChild(img);
-}
-function downloadScreenshotById(orderId){
-  const all = getPending().concat(getConfirmed()).concat(getRejected());
-  const o = all.find(x=>x.id === orderId);
-  if(!o || !o.paymentScreenshot){ alert('No screenshot available'); return; }
-  const a = document.createElement('a'); a.href = o.paymentScreenshot; a.download = `${orderId}_screenshot.png`; document.body.appendChild(a); a.click(); a.remove();
-}
-function openAllScreenshots(){
-  const all = getPending().concat(getConfirmed());
-  let opened = 0;
-  all.forEach(o=>{ if(o.paymentScreenshot){ window.open(o.paymentScreenshot); opened++; }});
-  alert(`Opened ${opened} screenshot(s) in new tabs (if any).`);
-}
-
-// export CSV helpers
-function toCSVRow(arr){ return arr.map(v=> `"${String(v||'').replace(/"/g,'""')}"`).join(','); }
-function exportCSV(list, filename='orders_export.csv'){
-  if(!list || !list.length){ alert('No orders to export'); return; }
-  const header = ['orderId','createdAt','paymentMethod','name','phone','address','city','state','pincode','subtotal','tax','grand','items','status'];
-  const rows = [toCSVRow(header)];
-  list.forEach(o=>{
-    const items = (o.items||[]).map(i=> `${i.name} x${i.qty}`).join('; ');
-    const r = [
-      o.id,
-      o.createdAt,
-      o.paymentMethod,
-      o.delivery?.name,
-      o.delivery?.phone,
-      o.delivery?.address,
-      o.delivery?.city,
-      o.delivery?.state,
-      o.delivery?.pincode,
-      o.totals?.subtotal,
-      o.totals?.tax,
-      o.totals?.grand,
-      items,
-      o.status || ''
+    // ----- Products (kept from your list) -----
+    const products = [
+      { id:1, name:"Cocopeat Block (1 KG)", price:120, img:"https://i.postimg.cc/y6pX71qk/OIP.jpg", description:"Compressed cocopeat made from coconut coir dust, ideal for soil improvement and water retention.", uses:["Soak and expand before use","Mix with soil for potting","Use as seed starting medium"] },
+      { id:2, name:"Coir Fiber Bundle", price:199, img:"https://i.postimg.cc/xjpy9frX/OIP-1.jpg", description:"Long, natural coconut coir fibers that are durable and versatile.", uses:["Planter liners & hanging baskets","Make ropes & mats","Composting aeration"] },
+      { id:3, name:"Activated Carbon (Coconut Shell)", price:499, img:"https://i.postimg.cc/KcprmGX4/OIP-2.jpg", description:"High-grade activated carbon produced from coconut shells for filtration.", uses:["Water filtration","Air purification","Aquarium filtration"] },
+      { id:4, name:"Compost Mix (Organic Fertilizer)", price:149, img:"https://i.postimg.cc/zDypT95y/il-1080x-N-1725209156-c1x6-e2e74919-5644-417e-8b4b-3f87a6314733.webp", description:"Nutrient-rich compost blend made from coconut and organic residues.", uses:["Soil amendment","Vegetable & flower gardens","Potting mix additive"] },
+      { id:5, name:"Ready-to-Use Pot (Coco Mix)", price:120, img:"https://i.postimg.cc/L4W6hZ6F/Whats-App-Image-2025-11-12-at-10-43-29-AM.jpg", description:"Eco pot pre-filled with cocopeat, coir, and compost in a 1:1:1 ratio — just add seed and water.", uses:["Home gardening","Seedlings & transplants","Biodegradable alternative to plastic pots"] }
     ];
-    rows.push(toCSVRow(r));
-  });
-  const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-}
-function exportCSVAll(){ const all = getPending().concat(getConfirmed()).concat(getRejected()); exportCSV(all, 'all_orders.csv'); }
-function exportCSVSelected(){ const ids = Array.from(selectedOrderIds); if(!ids.length){ alert('No orders selected'); return; } const all = getPending().concat(getConfirmed()).concat(getRejected()).filter(o=> ids.includes(o.id)); exportCSV(all, 'selected_orders.csv'); }
-function exportCSVPending(){ exportCSV(getPending(), 'pending_orders.csv'); }
 
-// misc helpers
-function renderCounts(){
-  const pending = getPending().length; const confirmed = getConfirmed().length; const rejected = getRejected().length;
-  document.getElementById('counts').textContent = `Pending: ${pending} · Confirmed: ${confirmed} · Rejected: ${rejected} · Selected: ${selectedOrderIds.size}`;
-  document.getElementById('adminClock').textContent = new Date().toLocaleString();
-}
-function updateCounts(){ renderCounts(); }
-
-// actions wired to UI
-document.getElementById('filterSelect').addEventListener('change', ()=> { renderList(); });
-document.getElementById('searchInput').addEventListener('input', ()=> { renderList(); });
-document.getElementById('refreshBtn').addEventListener('click', ()=> { renderList(); alert('Refreshed'); });
-document.getElementById('exportCsvBtn').addEventListener('click', ()=> { exportCSVSelected(); });
-document.getElementById('clearRejectedBtn').addEventListener('click', ()=> { if(confirm('Clear rejected orders from localStorage?')){ setRejected([]); renderList(); }});
-document.getElementById('year').textContent = new Date().getFullYear();
-
-// storage event to react to changes from storefront page
-window.addEventListener('storage', (e)=>{
-  if(e.key === PENDING_KEY || e.key === CONFIRMED_KEY || e.key === REJECTED_KEY){
-    renderList();
+    // ----- App state -----
+    const TAX = 0.18;
+    let cart = {}; // { productId: qty }
+// Click image to view fullscreen
+document.addEventListener("click", (e) => {
+  if (e.target.classList.contains("detail-image")) {
+    const img = e.target;
+    const overlay = document.createElement("div");
+    overlay.style.cssText = `
+      position:fixed;inset:0;background:rgba(0,0,0,0.9);
+      display:flex;justify-content:center;align-items:center;
+      z-index:9999;cursor:pointer;
+    `;
+    const fullImg = document.createElement("img");
+    fullImg.src = img.src;
+    fullImg.style.cssText = "max-width:90%;max-height:90%;border-radius:10px;box-shadow:0 0 20px rgba(0,0,0,0.5)";
+    overlay.appendChild(fullImg);
+    overlay.addEventListener("click", ()=>overlay.remove());
+    document.body.appendChild(overlay);
   }
 });
 
-// initialization
-function init(){
-  // ensure keys exist
-  if(!localStorage.getItem(PENDING_KEY)) localStorage.setItem(PENDING_KEY, JSON.stringify([]));
-  if(!localStorage.getItem(CONFIRMED_KEY)) localStorage.setItem(CONFIRMED_KEY, JSON.stringify([]));
-  if(!localStorage.getItem(REJECTED_KEY)) localStorage.setItem(REJECTED_KEY, JSON.stringify([]));
-  renderList();
-  setInterval(()=> renderCounts(), 1000);
-}
-init();
+    // ----- Render products -----
+    const productGrid = document.getElementById('productGrid');
+    function renderProducts(){
+      productGrid.innerHTML = '';
+      products.forEach(p=>{
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <img src="${p.img}" alt="${escapeHtml(p.name)}" loading="lazy">
+          <div>
+            <h3>${escapeHtml(p.name)}</h3>
+            <p class="desc">${escapeHtml(p.description)}</p>
+            <div class="product-meta">
+              <div class="price">₹${Number(p.price).toFixed(2)}</div>
+            </div>
+            <div class="product-actions">
+              <button class="btn btn-primary" onclick="addToCart(${p.id})">Add to Cart</button>
+              <button class="btn btn-secondary" onclick="viewDetails(${p.id})">View Details</button>
+            </div>
+          </div>
+        `;
+        productGrid.appendChild(card);
+      });
+    }
 
-/* Utility: clear everything (use carefully) */
-function clearAllLocal(){
-  if(!confirm('Clear all orders (pending, confirmed, rejected) from localStorage?')) return;
-  localStorage.removeItem(PENDING_KEY);
-  localStorage.removeItem(CONFIRMED_KEY);
-  localStorage.removeItem(REJECTED_KEY);
-  renderList();
-  alert('All local orders cleared.');
+    // escape helper
+    function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+    // ----- Cart UI -----
+    const cartSection = document.getElementById('cartSection');
+    const cartBody = document.getElementById('cartBody');
+    function addToCart(id){
+      cart[id] = (cart[id]||0) + 1;
+      renderCart();
+      // scroll to cart on mobile
+      if(window.innerWidth <= 640){
+        setTimeout(()=>{ document.getElementById('cartSection').scrollIntoView({behavior:'smooth'}); },100);
+      }
+    }
+    window.addToCart = addToCart;
+
+    function renderCart(){
+      const keys = Object.keys(cart);
+      if(keys.length === 0){
+        cartSection.classList.add('hidden');
+        cartBody.innerHTML = '';
+        updateTotals();
+        return;
+      }
+      cartSection.classList.remove('hidden');
+      cartBody.innerHTML = '';
+      let sub = 0;
+      keys.forEach(k=>{
+        const p = products.find(x=>x.id==k);
+        const qty = cart[k];
+        const total = p.price * qty;
+        sub += total;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${escapeHtml(p.name)}</td><td>₹${p.price.toFixed(2)}</td><td style="min-width:110px">
+          <button class="btn btn-secondary" onclick="decrement(${p.id})">-</button>
+          <span style="padding:0 8px">${qty}</span>
+          <button class="btn btn-secondary" onclick="increment(${p.id})">+</button>
+        </td><td>₹${total.toFixed(2)}</td>`;
+        cartBody.appendChild(tr);
+      });
+      updateTotals();
+    }
+    window.decrement = function(id){ if(!cart[id]) return; cart[id]--; if(cart[id]<=0) delete cart[id]; renderCart(); };
+    window.increment = function(id){ cart[id] = (cart[id]||0) + 1; renderCart(); };
+    function clearCart(){ cart = {}; renderCart(); }
+    window.clearCart = clearCart;
+
+    function updateTotals(){
+      const sub = Object.keys(cart).reduce((s,k)=> s + products.find(p=>p.id==k).price * cart[k], 0);
+      const gst = +(sub * TAX);
+      const grand = +(sub + gst);
+      document.getElementById('subTotal').textContent = sub.toFixed(2);
+      document.getElementById('gst').textContent = gst.toFixed(2);
+      document.getElementById('grand').textContent = grand.toFixed(2);
+    }
+
+    // ----- Product details modal -----
+    function viewDetails(id){
+      const p = products.find(x=>x.id==id);
+      const detail = document.getElementById('productDetail');
+      detail.innerHTML = `
+        <img class="detail-image" src="${p.img}" alt="${escapeHtml(p.name)}">
+        <h2 style="color:var(--accent);margin-bottom:6px">${escapeHtml(p.name)}</h2>
+        <p class="muted">${escapeHtml(p.description)}</p>
+        <h4 style="margin-top:12px;color:var(--accent)">Uses</h4>
+        <ul class="uses-list">${p.uses.map(u=>`<li>${escapeHtml(u)}</li>`).join('')}</ul>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <div class="price" style="font-weight:900">₹${p.price.toFixed(2)}</div>
+          <div style="margin-left:auto"><button class="btn btn-primary" onclick="addToCart(${p.id}); closeProductModal()">Add to Cart</button></div>
+        </div>
+      `;
+      showModal('productModal');
+    }
+    window.viewDetails = viewDetails;
+
+    function showModal(id){
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.classList.remove('hidden');
+      el.style.display = 'flex';
+      el.setAttribute('aria-hidden','false');
+    }
+    function closeProductModal(){ const el = document.getElementById('productModal'); if(el){ el.style.display='none'; el.setAttribute('aria-hidden','true'); } }
+    function closeInvoice(){ const el = document.getElementById('invoiceModal'); if(el){ el.style.display='none'; el.setAttribute('aria-hidden','true'); document.getElementById('orderMsg').textContent=''; } }
+
+    // click outside to close modals
+    window.addEventListener('click', (e)=>{
+      ['productModal','invoiceModal'].forEach(id=>{
+        const el = document.getElementById(id);
+        if(el && e.target === el){ el.style.display='none'; el.setAttribute('aria-hidden','true'); }
+      });
+      // mobile nav
+      if(e.target === document.getElementById('mobileNav')) closeMobileNav();
+    });
+
+    // ----- Invoice flow -----
+    function openInvoice(){
+      // fill order items
+      const orderItems = document.getElementById('orderItems');
+      orderItems.innerHTML = '';
+      const keys = Object.keys(cart);
+      if(keys.length === 0){ alert('Cart is empty'); return; }
+      let sub=0;
+      keys.forEach(k=>{
+        const p = products.find(x=>x.id==k);
+        const qty = cart[k];
+        const total = p.price * qty; sub += total;
+        const row = document.createElement('div');
+        row.style.display='flex'; row.style.justifyContent='space-between'; row.style.marginBottom='6px';
+        row.innerHTML = `<div>${escapeHtml(p.name)} × ${qty}</div><div>₹${total.toFixed(2)}</div>`;
+        orderItems.appendChild(row);
+      });
+      const gst = +(sub * TAX); const grand = +(sub + gst);
+      const summary = document.createElement('div');
+      summary.style.marginTop='10px';
+      summary.innerHTML = `<div style="display:flex;justify-content:space-between"><div class="muted">Subtotal</div><div>₹${sub.toFixed(2)}</div></div>
+      <div style="display:flex;justify-content:space-between"><div class="muted">GST (18%)</div><div>₹${gst.toFixed(2)}</div></div>
+      <div style="display:flex;justify-content:space-between;font-weight:800;margin-top:6px"><div>Grand</div><div>₹${grand.toFixed(2)}</div></div>`;
+      orderItems.appendChild(summary);
+
+      // show modal
+      showModal('invoiceModal');
+      togglePaymentMode(); // ensure correct panel visible
+      // prefill totals (invisible fields use displayed totals)
+      document.getElementById('orderMsg').textContent = '';
+    }
+    window.openInvoice = openInvoice;
+
+    // payment mode toggling
+    function togglePaymentMode(){
+      const mode = document.querySelector('input[name="pay"]:checked')?.value || 'upi';
+      document.getElementById('upiPanel').style.display = (mode === 'upi') ? 'block' : 'none';
+      document.getElementById('codPanel').style.display = (mode === 'cod') ? 'block' : 'none';
+    }
+    window.togglePaymentMode = togglePaymentMode;
+    // copy UPI
+    function copyUPINumber(){
+      const txt = '+91-8639533425';
+      navigator.clipboard?.writeText(txt).then(()=> alert('UPI copied: ' + txt)).catch(()=> alert('Copy manually: ' + txt));
+    }
+    window.copyUPINumber = copyUPINumber;
+
+    // place order -> upload screenshot if needed -> write Firestore doc
+    async function placeOrder(){
+      const msgEl = document.getElementById('orderMsg');
+      msgEl.style.color = 'var(--muted)';
+      msgEl.textContent = 'Processing order...';
+      // collect
+      const name = document.getElementById('fullName').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const address = document.getElementById('address').value.trim();
+      const city = document.getElementById('city').value.trim();
+      const pincode = document.getElementById('pincode').value.trim();
+      if(!name || !phone || !address || !city || !pincode){ msgEl.style.color='red'; msgEl.textContent = 'Please fill all fields.'; return; }
+      if(!/^[6-9]\d{9}$/.test(phone)){ msgEl.style.color='red'; msgEl.textContent='Enter valid 10-digit mobile number (6-9)'; return; }
+
+      const payMethod = document.querySelector('input[name="pay"]:checked')?.value || 'upi';
+      const fileInput = document.getElementById('screenshot');
+      const file = fileInput?.files?.[0] || null;
+
+      // if UPI, screenshot is required
+      if(payMethod === 'upi' && !file){ msgEl.style.color='red'; msgEl.textContent = 'Please upload payment screenshot for UPI orders.'; return; }
+
+      // prepare totals and items
+      const items = Object.keys(cart).map(k=>{
+        const p = products.find(x=>x.id==k);
+        return { id:p.id, name:p.name, qty:cart[k], price:p.price };
+      });
+      const subtotal = Object.keys(cart).reduce((s,k)=> s + products.find(p=>p.id==k).price * cart[k], 0);
+      const tax = +(subtotal * TAX);
+      const grand = +(subtotal + tax);
+
+      // create order object
+      const orderId = 'ORD' + Date.now();
+      const orderDoc = {
+        id: orderId,
+        delivery: { name, phone, address, city, pincode },
+        items,
+        totals: { subtotal, tax, grand },
+        paymentMethod: payMethod,
+        paymentScreenshot: '',
+        status: payMethod === 'cod' ? 'confirmed_cod' : 'pending_payment',
+        createdAt: serverTimestamp()
+      };
+      try{
+        // if screenshot, upload to storage
+        if(file){
+          const storageRef = ref(storage, `screenshots/${orderId}_${file.name}`);
+          await uploadBytes(storageRef, file);
+          const url = await getDownloadURL(storageRef);
+          orderDoc.paymentScreenshot = url;
+        }
+        // write to Firestore
+        await setDoc(doc(db, 'orders', orderId), orderDoc);
+        msgEl.style.color = 'green';
+        msgEl.textContent = '✅ Order placed. Order ID: ' + orderId;
+        // clear cart & form
+        cart = {};
+        renderCart();
+        // close modal after a moment
+        setTimeout(()=>{ closeInvoice(); }, 1300);
+      }catch(err){
+        console.error(err);
+        msgEl.style.color = 'red';
+        msgEl.textContent = 'Error placing order: ' + (err?.message || String(err));
+      }
+    }
+    window.placeOrder = placeOrder;
+
+    // ----- small utilities -----
+    function scrollToProducts(){ document.getElementById('products').scrollIntoView({behavior:'smooth'}); }
+
+    // mobile nav toggling
+    const hamburger = document.getElementById('hamburger');
+    const mobileNav = document.getElementById('mobileNav');
+    const mobileNavClose = document.getElementById('mobileNavClose');
+    hamburger.addEventListener('click', ()=>{ mobileNav.classList.remove('hidden'); mobileNav.style.display='flex'; mobileNav.setAttribute('aria-hidden','false'); });
+    function closeMobileNav(){ mobileNav.classList.add('hidden'); mobileNav.style.display='none'; mobileNav.setAttribute('aria-hidden','true'); }
+    mobileNavClose?.addEventListener('click', closeMobileNav);
+    window.closeMobileNav = closeMobileNav;
+
+    // init
+    renderProducts();
+    renderCart();
+    updateTotals();
+    document.getElementById('year').textContent = new Date().getFullYear();
+    // ensure payment mode correct on load
+    togglePaymentMode();
+
+  </script>
+  <!-- WhatsApp Floating Button -->
+<a href="https://wa.me/918639533425?text=Hi%20EcoCoco%20Value!%20I'm%20interested%20in%20placing%20a%20bulk%20order.%20Can%20you%20share%20the%20details%3F" 
+   target="_blank" 
+   id="whatsapp-btn" 
+   aria-label="Chat on WhatsApp">
+  💬
+</a>
+
+<style>
+#whatsapp-btn {
+  position: fixed;
+  bottom: 18px;
+  right: 18px;
+  background: #25d366;
+  color: white;
+  font-size: 1.8rem;
+  text-decoration: none;
+  padding: 12px 16px;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  transition: transform 0.2s, background 0.2s;
+  z-index: 9999;
+}
+#whatsapp-btn:hover {
+  background: #20b358;
+  transform: scale(1.1);
+}
+#whatsapp-btn::after {
+  content: "Bulk Order";
+  position: absolute;
+  right: 58px;
+  top: 12px;
+  background: #111827;
+  color: #fff;
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.2s, transform 0.2s;
+}
+#whatsapp-btn:hover::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (max-width: 640px){
+  #whatsapp-btn {
+    font-size: 1.6rem;
+    padding: 10px 14px;
+    bottom: 14px;
+    right: 14px;
+  }
+  #whatsapp-btn::after { display: none; }
 }
 
-/* convenience: download screenshot by scanning both lists */
-function downloadScreenshotById(orderId){
-  const all = getPending().concat(getConfirmed()).concat(getRejected());
-  const o = all.find(x=>x.id === orderId);
-  if(!o || !o.paymentScreenshot){ alert('No screenshot available'); return; }
-  const a = document.createElement('a'); a.href = o.paymentScreenshot; a.download = `${orderId}_screenshot.png`; document.body.appendChild(a); a.click(); a.remove();
-}
-</script>
+</style>
+
 </body>
 </html>
+
+
